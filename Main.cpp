@@ -41,8 +41,8 @@ int main()
 	}
 
 	// Init window
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Combo", nullptr, nullptr);
-	//GLFWwindow* window = glfwCreateWindow(1920, 1080, "Combo", nullptr, nullptr);
+	////GLFWwindow* window = glfwCreateWindow(800, 600, "Combo", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(1080, 720, "Combo", nullptr, nullptr);
 	//GLFWwindow* window = glfwCreateWindow(1920, 1080, "Combo", glfwGetPrimaryMonitor(), nullptr);
 	if (window == nullptr)
 	{
