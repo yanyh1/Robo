@@ -24,18 +24,18 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 
 	// slope
 	Simulation::AddObjToScene("resources/floor.obj",
-		glm::vec3(0, -3.0, 0),
+		glm::vec3(5, -3.0, 0),
 		glm::angleAxis(60.0f, glm::vec3(0, 0, 1)),
 		0.0f,
 		glm::vec3(0.7, 0.7, 0.6));
 	// floor
-    Simulation::AddObjToScene("resources/floor.obj",
-                              glm::vec3(0, -3.0, 0),
-                              glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
-                              0.0f,
-                              glm::vec3(0.7, 0.7, 0.1));
+	Simulation::AddObjToScene("resources/floor.obj",
+		glm::vec3(-5, -5.0, 0),
+		glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
+		0.0f,
+		glm::vec3(0.7, 0.7, 0.1));
 
-		//Create A blocker
+	//Create A blocker
 //	ParseObj("resources/box.obj", mesh);
 //mesh.GetModelData(model);
 //collider = new HullCollider(mesh);
