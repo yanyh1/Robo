@@ -5,7 +5,7 @@
 #include <vector>
 #include "Simulation/Simulations.h"
 
-Simulation* sim = &ClothSimulation::GetInstance();
+Simulation* sim = &CollisionDetectionTest::GetInstance();
 
 void OnWindowResize(GLFWwindow* window, int width, int height)
 {

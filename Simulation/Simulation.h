@@ -60,7 +60,9 @@ protected:
 	Model* hemiSphere;
 
 public:
-	Simulation();
+	Simulation();
+
+	void AddObjToScene(const std::string& file, glm::vec3 position, glm::quat orientation, float mass, glm::vec3 color);
 
 	~Simulation();
 

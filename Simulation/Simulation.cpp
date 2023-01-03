@@ -403,3 +403,25 @@ void Simulation::Update()
 
 Simulation::~Simulation()
 {}
+
+void Simulation::AddObjToScene(const std::string& file,glm::vec3 position,
+                               glm::quat orientation,float mass,
+                               glm::vec3 color)
+{
+    HMesh mesh;
+    ModelData model;
+    Collider* collider;
+    Body body;
+    ParseObj(file, mesh);
+    mesh.GetModelData(model);
+    collider = new HullCollider(mesh);
+    body.SetModelData(model);
+    body.SetPosition(position);
+    body.SetOrientation(orientation);
+    body.SetMass(mass);
+    body.SetColor(color);
+    bodies.push_back(body);
+    bodies.back().AddCollider(collider);
+    colliders.push_back(collider);
+
+}

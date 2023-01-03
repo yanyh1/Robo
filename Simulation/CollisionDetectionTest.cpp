@@ -22,29 +22,43 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 	Collider* collider;
 	Body body;
 
+	// slope
+	Simulation::AddObjToScene("resources/floor.obj",
+		glm::vec3(0, -3.0, 0),
+		glm::angleAxis(60.0f, glm::vec3(0, 0, 1)),
+		0.0f,
+		glm::vec3(0.7, 0.7, 0.6));
 	// floor
-	ParseObj("resources/floor.obj", mesh);
-	mesh.GetModelData(model);
-	collider = new HullCollider(mesh);
-	body.SetModelData(model);
-	body.SetPosition(glm::vec3(0, -5.0, 0));
-	body.SetMass(0.0f);
-	body.SetColor(glm::vec3(0.7, 0.7, 0.6));
-	bodies.push_back(body);
-	bodies.back().AddCollider(collider);
-	colliders.push_back(collider);
+    Simulation::AddObjToScene("resources/floor.obj",
+                              glm::vec3(0, -3.0, 0),
+                              glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
+                              0.0f,
+                              glm::vec3(0.7, 0.7, 0.1));
 
-	float radius = 0.1f;
-	CreateSphere(radius, model);
-	body.SetModelData(model);
-	body.SetPosition(glm::vec3(0.0, 0.0, 0.0));
-	body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));	// setting orientation to sphere causes strange behaviour. why?
-	body.SetMass(1.0f);
-	body.SetColor(glm::vec3(1.0, 0.9, 0.3));
-	bodies.push_back(body);
-	collider = new SphereCollider(radius);
-	bodies.back().AddCollider(collider);
-	colliders.push_back(collider);
+		//Create A blocker
+//	ParseObj("resources/box.obj", mesh);
+//mesh.GetModelData(model);
+//collider = new HullCollider(mesh);
+//body.SetModelData(model);
+//body.SetPosition(glm::vec3(0.0, sp, -5.0));
+
+
+	float spawnY = 1.0;
+	for (float sp = spawnY; sp < 10.f; sp += 0.4f)
+	{
+		float radius = 0.1f;
+		CreateSphere(radius, model);
+		body.SetModelData(model);
+		body.SetPosition(glm::vec3(0.0, sp, -5.0));
+		body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));	// setting orientation to sphere causes strange behaviour. why?
+		body.SetMass(1.0f);
+		body.SetColor(glm::vec3(1.0, 0.9, 0.3));
+		bodies.push_back(body);
+		collider = new SphereCollider(radius);
+		bodies.back().AddCollider(collider);
+		colliders.push_back(collider);
+
+	}
 
 	BroadPhase::GetInstance().Init(colliders);
 }
@@ -59,18 +73,18 @@ void CollisionDetectionTest::OnKeyInput(GLFWwindow* window, int key, int code, i
 	glm::quat dq;
 	float t = 0.1f;
 	if (keys[GLFW_KEY_DOWN])
-		bodies[1].SetPosition(p + t*glm::vec3(0, -1.0, 0));
+		bodies[1].SetPosition(p + t * glm::vec3(0, -1.0, 0));
 	if (keys[GLFW_KEY_UP])
-		bodies[1].SetPosition(p + t*glm::vec3(0, 1.0, 0));
+		bodies[1].SetPosition(p + t * glm::vec3(0, 1.0, 0));
 	if (keys[GLFW_KEY_RIGHT])
-		bodies[1].SetPosition(p + t*glm::vec3(1.0, 0, 0));
+		bodies[1].SetPosition(p + t * glm::vec3(1.0, 0, 0));
 	if (keys[GLFW_KEY_LEFT])
-		bodies[1].SetPosition(p + t*glm::vec3(-1.0, 0, 0));
+		bodies[1].SetPosition(p + t * glm::vec3(-1.0, 0, 0));
 	if (keys[GLFW_KEY_X])
 	{
-		axis = glm::vec3(1,0,0);
-		dq = glm::quat(0, axis*t);
-		o += dq*o*0.5f;
+		axis = glm::vec3(1, 0, 0);
+		dq = glm::quat(0, axis * t);
+		o += dq * o * 0.5f;
 		o = glm::normalize(o);
 		bodies[1].SetOrientation(o);
 	}
