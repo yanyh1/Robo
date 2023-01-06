@@ -123,7 +123,6 @@
     <ClInclude Include="Simulation\PlaneConstraintTest.h" />
     <ClInclude Include="Simulation\PositionJointTest.h" />
     <ClInclude Include="Simulation\RevoluteJointTest.h" />
-    <ClInclude Include="Simulation\ScaleTest.h" />
     <ClInclude Include="Simulation\Simulation.h" />
     <ClInclude Include="Simulation\Simulations.h" />
   </ItemGroup>
@@ -164,7 +163,6 @@
     <ClCompile Include="Simulation\PlaneConstraintTest.cpp" />
     <ClCompile Include="Simulation\PositionJointTest.cpp" />
     <ClCompile Include="Simulation\RevoluteJointTest.cpp" />
-    <ClCompile Include="Simulation\ScaleTest.cpp" />
     <ClCompile Include="Simulation\Simulation.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

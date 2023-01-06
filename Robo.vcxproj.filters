@@ -54,9 +54,6 @@
     <ClInclude Include="Simulation\Simulations.h">
       <Filter>Simulation</Filter>
     </ClInclude>
-    <ClInclude Include="Simulation\ScaleTest.h">
-      <Filter>Simulation</Filter>
-    </ClInclude>
     <ClInclude Include="Physics\Collider.h">
       <Filter>Physics</Filter>
     </ClInclude>
@@ -165,9 +162,6 @@
     </ClCompile>
     <ClCompile Include="Geometry\ObjParser.cpp">
       <Filter>Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="Simulation\ScaleTest.cpp">
-      <Filter>Simulation</Filter>
     </ClCompile>
     <ClCompile Include="Simulation\InertiaTest.cpp">
       <Filter>Simulation</Filter>
