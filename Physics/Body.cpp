@@ -28,7 +28,7 @@ Body::Body()
 	R(1),
 	velocity(0),
 	angularVelocity(0),
-	motion(5.0f*SLEEP_EPSILON2),
+	motion(5.0f * SLEEP_EPSILON2),
 	awake(true),
 	canSleep(true),
 	forceSum(0),
@@ -171,7 +171,7 @@ glm::vec3 Body::GetAngularVelocity() const
 void Body::SetAwake(const bool state)
 {
 	awake = state;
-	
+
 	if (awake)
 	{
 		motion = 5.0f * SLEEP_EPSILON2;
@@ -272,10 +272,10 @@ void Body::AddCollider(Collider* collider)
 
 	switch (collider->GetShape())
 	{
-	case (Collider::Hull) :
+	case (Collider::Hull):
 		static_cast<HullCollider*>(collider)->CalculateMass();
 		break;
-	case(Collider::Sphere) :
+	case(Collider::Sphere):
 		static_cast<SphereCollider*>(collider)->CalculateMass();
 		break;
 	}
@@ -330,6 +330,8 @@ void Body::IntegrateVelocity(const float dt)
 	angularVelocity += invInertia * torqueSum * dt;
 
 	// damp velocity?
+	velocity *= 0.99f;
+	angularVelocity *= 0.99f;
 
 	forceSum = glm::vec3(0);
 	torqueSum = glm::vec3(0);

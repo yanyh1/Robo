@@ -18,27 +18,11 @@ void InertiaTest::OnInit(GLFWwindow* window)
 	HMesh mesh;
 	ParseObj("resources/box.obj", mesh);
 
-	std::vector<glm::vec3> vertices;
-	std::vector<int> indices;
-	std::vector<int> frameIndices;
-
-	for (auto vert : mesh.vertices)
-	{
-		vertices.push_back(vert->position);
-	}
-	mesh.GetTriangleIndices(indices);
-	mesh.GetLineIndices(frameIndices);
-
-	ModelData boxModel(vertices, indices, frameIndices);
-
-	Collider* boxCollider = new HullCollider(mesh);
-
-	Body body;
-	body.SetPosition(glm::vec3(0));
-	bodies.push_back(body);
-	bodies.back().AddCollider(boxCollider);
-
-	colliders.push_back(boxCollider);
+	Simulation::AddObjToScene("resources/box.obj",
+		glm::vec3(0, 0, -5),
+		glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
+		0.3f,
+		glm::vec3(0.7, 0.7, 0.6));
 }
 
 void InertiaTest::OnKeyInput(GLFWwindow* window, int key, int code, int action, int mods)
@@ -47,12 +31,12 @@ void InertiaTest::OnKeyInput(GLFWwindow* window, int key, int code, int action, 
 
 	float w = 1.0f;
 	if (keys[GLFW_KEY_R])
-		bodies[0].SetAngularVelocity(w*glm::vec3(1, 0, 0));
+		bodies[0].SetAngularVelocity(w * glm::vec3(1, 0, 0));
 	if (keys[GLFW_KEY_T])
-		bodies[0].SetAngularVelocity(w*glm::vec3(0, 1, 0));
+		bodies[0].SetAngularVelocity(w * glm::vec3(0, 1, 0));
 	if (keys[GLFW_KEY_Y])
-		bodies[0].SetAngularVelocity(w*glm::vec3(0, 0, 1));
+		bodies[0].SetAngularVelocity(w * glm::vec3(0, 0, 1));
 
 	if (keys[GLFW_KEY_F])
-		bodies[0].ApplyForce(bodies[0].GetMass()*3.0f*glm::vec3(0, 1, 0), glm::vec3(3, -1, 2));
+		bodies[0].ApplyForce(bodies[0].GetMass() * 3.0f * glm::vec3(0, 1, 0), glm::vec3(3, -1, 2));
 }
