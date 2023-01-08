@@ -4,8 +4,6 @@
 
 #define EPSILON 0.005f
 
-HalfSpace::HalfSpace()
-{}
 
 HalfSpace::HalfSpace(const glm::vec3& normal, float distance)
 	: normal(normal), distance(distance)
@@ -44,7 +42,7 @@ bool HalfSpace::On(const glm::vec3& point) const
 {
 	float dist = Distance(point);
 
-	return (dist < EPSILON && dist > -EPSILON);
+	return (dist < EPSILON&& dist > -EPSILON);
 }
 
 // Compute a consistent orthonormal basis with the given vector
@@ -78,11 +76,11 @@ void CreateSphere(const float radius, ModelData& model)
 	{
 		for (size_t s = 0; s < stacks; ++s)
 		{
-			float const y = (float)(sin(-PI*0.5f + PI * r * R));
+			float const y = (float)(sin(-PI * 0.5f + PI * r * R));
 			float const x = (float)(cos(2.0f * PI * s * S) * sin(PI * r * R));
 			float const z = (float)(sin(2.0f * PI * s * S) * sin(PI * r * R));
 
-			model.vertices.push_back(glm::vec3(x, y, z)*radius);
+			model.vertices.push_back(glm::vec3(x, y, z) * radius);
 			int curRow = r * stacks;
 			int nextRow = (r + 1) * stacks;
 			model.indices.push_back(curRow + s);
@@ -125,6 +123,6 @@ void CreateLine(const glm::vec3& p1, const glm::vec3& p2, ModelData& model)
 glm::mat3 Skew(const glm::vec3& v)
 {
 	return glm::mat3(0, v.z, -v.y,
-					 -v.z, 0, v.x,
-					 v.y, -v.x, 0);
+		-v.z, 0, v.x,
+		v.y, -v.x, 0);
 }

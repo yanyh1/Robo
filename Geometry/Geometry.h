@@ -9,7 +9,7 @@ struct HalfSpace
 	glm::vec3 normal;
 	float distance;
 
-	HalfSpace();
+	HalfSpace() = default;
 	HalfSpace(const glm::vec3& normal, const float distance);
 	HalfSpace(const glm::vec3& normal, const glm::vec3& point);
 

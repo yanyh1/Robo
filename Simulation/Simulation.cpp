@@ -43,27 +43,27 @@ void Simulation::OnInit(GLFWwindow* window)
 	Camera::GetInstance().SetProjection(45.0, (float)width / (float)height);
 	Camera::GetInstance().SetPosition(glm::vec3(0, 1, 0));
 
-	HMesh mesh;
-	ParseObj("resources/box.obj", mesh);
-	std::vector<glm::vec3> vertices;
-	std::vector<int> indices;
+	//HMesh mesh;
+	//ParseObj("resources/box.obj", mesh);
+	//std::vector<glm::vec3> vertices;
+	//std::vector<int> indices;
 
-	for (auto vert : mesh.vertices)
-	{
-		vertices.push_back(vert->position);
-	}
-	mesh.GetTriangleIndices(indices);
-	boxModel = new Poly(vertices, indices);
-	boxModel->SetColor(glm::vec3(1.0, 0, 0));
+	//for (auto vert : mesh.vertices)
+	//{
+	//	vertices.push_back(vert->position);
+	//}
+	//mesh.GetTriangleIndices(indices);
+	//boxModel = new Poly(vertices, indices);
+	//boxModel->SetColor(glm::vec3(1.0, 0, 0));
 
 	ModelData model;
-	ParseObj("resources/cylinder.obj", mesh);
-	mesh.GetModelData(model);
-	cylinder = new Model(model.vertices, model.indices);
+	//ParseObj("resources/cylinder.obj", mesh);
+	//mesh.GetModelData(model);
+	//cylinder = new Model(model.vertices, model.indices);
 	CreateSphere(0.03, model);
 	sphere = new Model(model.vertices, model.indices);
-	CreateHemiSphere(1.0, model);
-	hemiSphere = new Model(model.vertices, model.indices);
+	//CreateHemiSphere(1.0, model);
+	//hemiSphere = new Model(model.vertices, model.indices);
 
 	// reserving space for global data
 	// otherwise any pointers or references to container elements will get invalidated on using push_back
@@ -161,8 +161,8 @@ void Simulation::OnMouseButton(GLFWwindow* window, int button, int action, int m
 		// check if mouse point with collider
 		for (int i = 0; i < colliders.size(); i++)
 		{
-			Collider*c = colliders[i];
-			
+			Collider* c = colliders[i];
+
 			if (c->GetBody()->GetInvMass() == 0.0f)
 				continue;
 
@@ -331,7 +331,7 @@ void Simulation::Update()
 		T = glm::translate(j.GetAnchor());
 		glm::vec3 axis = j.GetAxis();
 		if (axis.x > 0.9f)
-			R = glm::toMat4(glm::angleAxis(1.57f, glm::vec3(0,0,1.0)));
+			R = glm::toMat4(glm::angleAxis(1.57f, glm::vec3(0, 0, 1.0)));
 		else if (axis.z > 0.9f)
 			R = glm::toMat4(glm::angleAxis(1.57f, glm::vec3(1.0, 0, 0)));
 		else
@@ -404,24 +404,24 @@ void Simulation::Update()
 Simulation::~Simulation()
 {}
 
-void Simulation::AddObjToScene(const std::string& file,glm::vec3 position,
-                               glm::quat orientation,float mass,
-                               glm::vec3 color)
+void Simulation::AddObjToScene(const std::string& file, glm::vec3 position,
+	glm::quat orientation, float mass,
+	glm::vec3 color)
 {
-    HMesh mesh;
-    ModelData model;
-    Collider* collider;
-    Body body;
-    ParseObj(file, mesh);
-    mesh.GetModelData(model);
-    collider = new HullCollider(mesh);
-    body.SetModelData(model);
-    body.SetPosition(position);
-    body.SetOrientation(orientation);
-    body.SetMass(mass);
-    body.SetColor(color);
-    bodies.push_back(body);
-    bodies.back().AddCollider(collider);
-    colliders.push_back(collider);
+	HMesh mesh;
+	ModelData model;
+	Collider* collider;
+	Body body;
+	ParseObj(file, mesh);
+	mesh.GetModelData(model);
+	collider = new HullCollider(mesh);
+	body.SetModelData(model);
+	body.SetPosition(position);
+	body.SetOrientation(orientation);
+	body.SetMass(mass);
+	body.SetColor(color);
+	bodies.push_back(body);
+	bodies.back().AddCollider(collider);
+	colliders.push_back(collider);
 
 }
