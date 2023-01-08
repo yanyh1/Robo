@@ -84,13 +84,13 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 	std::cout << "生成" << howmany << "个boxes" << std::endl;
 	//生成64个boxes
 	howmany = 0;
-	goto END;
+	//goto END;
 
 BallSimu:
 	float radius = 0.8f;
 	CreateSphere(radius, model);
 	body.SetModelData(model);
-	body.SetMass(1.f);
+	body.SetMass(0.4f);
 	body.SetColor(glm::vec3(1.0, 0.9, 0.3));
 	body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));
 	body.SetRestitution(1.f);

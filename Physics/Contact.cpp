@@ -44,7 +44,8 @@ void Contact::CalculateBias()
 	// restitution
 	float e = (A->GetRestitution() + B->GetRestitution()) * 0.5f;
 	float vSep = CalculateNormalConstraint();
-	bias = e * (glm::min(penetration - VELOCITYSLOP, 0.0f));
+	bias = e * (glm::min(vSep - VELOCITYSLOP, 0.0f));
+	//bias = e * (glm::min(penetration - VELOCITYSLOP, 0.0f));
 }
 
 void Contact::SolveVelocities(Velocity& vA, Velocity& vB)
