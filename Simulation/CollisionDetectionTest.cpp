@@ -67,10 +67,10 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 
 	srand(time(NULL));
 
-	goto BallSimu;
+	//goto BallSimu;
 	for (float spy = 20.f; spy < 50.f; spy += 3.8f)
 	{
-		for (float spx = 5.0f; spx < 30.f; spx += 2.8f)
+		for (float spx = 10.0f; spx < 30.f; spx += 2.8f)
 		{
 			Simulation::AddObjToScene("resources/box.obj",
 				glm::vec3(spx, spy, myrandom() * 20),
@@ -80,7 +80,7 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 
 		}
 	}
-	goto END;
+	//goto END;
 
 BallSimu:
 	float radius = 0.8f;

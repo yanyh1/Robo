@@ -426,8 +426,7 @@ void DetectSphereWithHull(std::vector<Manifold>& manifolds, SphereCollider* A, H
 			}
 		}
 
-		float dist2 = minDistance * minDistance;
-		if (dist2 > A->GetRadius() * A->GetRadius())
+		if (minDistance > A->GetRadius())
 			return;
 
 		// intersect with closest face plane
@@ -452,7 +451,7 @@ void DetectSphereWithHull(std::vector<Manifold>& manifolds, SphereCollider* A, H
 			manifolds.push_back(m);
 			return;
 		}
-
+		return;
 		// intersect with edges of closest face
 		e = B->GetFace(bestFace)->edge;
 		glm::vec3 pA, pB;
@@ -496,45 +495,7 @@ void DetectCollision(std::vector<Manifold>& manifolds, Collider* A, Collider* B)
 	}
 	else {
 		assert(false);
-	}/*
-	switch (A->GetShape())
-	{
-	case (Collider::Hull):
-	{
-		switch (B->GetShape())
-		{
-		case (Collider::Hull):
-			DetectHullvsHull(manifolds, static_cast<HullCollider*>(A), static_cast<HullCollider*>(B));
-			break;
-		case (Collider::Sphere):
-			DetectSphereVsHull(manifolds, static_cast<SphereCollider*>(B), static_cast<HullCollider*>(A));
-			break;
-		default:
-			assert(false);
-			break;
-		}
 	}
-	break;
-	case (Collider::Sphere):
-	{
-		switch (B->GetShape())
-		{
-		case (Collider::Sphere):
-
-			break;
-		case (Collider::Hull):
-			DetectSphereVsHull(manifolds, static_cast<SphereCollider*>(A), static_cast<HullCollider*>(B));
-			break;
-		default:
-			assert(false);
-			break;
-		}
-	}
-	break;
-	default:
-		assert(false);
-		break;
-	}*/
 }
 
 glm::vec3 Simplex::FindClosestPoint() const

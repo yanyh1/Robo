@@ -58,6 +58,7 @@ int main()
 	glfwSetCursorPosCallback(window, OnMouseMove);
 	glfwSetKeyCallback(window, OnKeyInput);
 
+	auto fpsClock = clock();
 	// Game Loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -68,6 +69,8 @@ int main()
 		sim->Update();
 
 		glfwSwapBuffers(window);
+		std::cout << "FPS: " << 1 / (((double)(clock() - fpsClock)) / CLOCKS_PER_SEC) << std::endl;
+		fpsClock = clock();
 	}
 
 	std::cout << "Window closed" << std::endl;
