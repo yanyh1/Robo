@@ -111,7 +111,6 @@
     <ClInclude Include="Physics\SphereCollider.h" />
     <ClInclude Include="Physics\Spring.h" />
     <ClInclude Include="Simulation\CollisionDetectionTest.h" />
-    <ClInclude Include="Simulation\CompositeBodyTest.h" />
     <ClInclude Include="Simulation\Dominoes.h" />
     <ClInclude Include="Simulation\FractureTest.h" />
     <ClInclude Include="Simulation\InertiaTest.h" />
@@ -145,7 +144,6 @@
     <ClCompile Include="Physics\SphereCollider.cpp" />
     <ClCompile Include="Physics\Spring.cpp" />
     <ClCompile Include="Simulation\CollisionDetectionTest.cpp" />
-    <ClCompile Include="Simulation\CompositeBodyTest.cpp" />
     <ClCompile Include="Simulation\Dominoes.cpp" />
     <ClCompile Include="Simulation\FractureTest.cpp" />
     <ClCompile Include="Simulation\InertiaTest.cpp" />

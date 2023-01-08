@@ -7,7 +7,7 @@
 #include "SystemManager.h"
 
 Simulation* sim = &CollisionDetectionTest::GetInstance();
-//Simulation* sim = &FrictionTest::GetInstance();
+//Simulation* sim = &CompositeBodyTest::GetInstance();
 
 void OnWindowResize(GLFWwindow* window, int width, int height)
 {

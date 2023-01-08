@@ -44,7 +44,7 @@ void Contact::CalculateBias()
 	// restitution
 	float e = (A->GetRestitution() + B->GetRestitution()) * 0.5f;
 	float vSep = CalculateNormalConstraint();
-	bias = e * (glm::max(penetration - VELOCITYSLOP, 0.0f));
+	bias = e * (glm::min(penetration - VELOCITYSLOP, 0.0f));
 }
 
 void Contact::SolveVelocities(Velocity& vA, Velocity& vB)
@@ -90,7 +90,6 @@ void Contact::SolvePositions(Position& pA, Position& pB)
 	float K = CalculateEffectiveMass(JN, A, B);
 	float C = -BAUMGARTE * (glm::max(penetration - POSITIONSLOP, 0.0f));
 	float lambda = K > 0.0f ? -C / K : 0.0f;
-	//float lambda = -C / K;
 	glm::vec3 P = lambda * normal;
 
 	pA.c -= P * A->GetInvMass();

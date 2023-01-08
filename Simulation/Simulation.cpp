@@ -34,7 +34,7 @@ void Simulation::OnInit(GLFWwindow* window)
 	mouseX = width / 2.0f;
 	mouseY = height / 2.0f;
 
-	glClearColor(0.3, 0.3, 0.3, 0);
+	glClearColor(0.3f, 0.3f, 0.3f, 0.f);
 
 	// draw the pixel only if the object is closer to the viewer
 	glEnable(GL_DEPTH_TEST); // enables depth-testing
@@ -49,7 +49,7 @@ void Simulation::OnInit(GLFWwindow* window)
 	std::vector<int> indices;
 
 	ModelData model;
-	CreateSphere(0.03, model);
+	CreateSphere(0.03f, model);
 	sphere = new Model(model.vertices, model.indices);
 
 	bodies.reserve(5000);
@@ -70,19 +70,19 @@ void Simulation::OnMouseMove(GLFWwindow* window, double x, double y)
 {
 	if (firstMouseCB)
 	{
-		mouseX = x;
-		mouseY = y;
+		mouseX = (float)x;
+		mouseY = (float)y;
 		firstMouseCB = false;
 	}
 
-	float dx = mouseX - x;
-	float dy = mouseY - y;
+	float dx = mouseX - (float)x;
+	float dy = mouseY - (float)y;
 
-	mouseX = x;
-	mouseY = y;
+	mouseX = (float)x;
+	mouseY = (float)y;
 
-	dx *= MOUSE_SENSITIVITY;
-	dy *= MOUSE_SENSITIVITY;
+	dx *= (float)MOUSE_SENSITIVITY;
+	dy *= (float)MOUSE_SENSITIVITY;
 
 	yaw += dx;
 	pitch += dy;
@@ -142,7 +142,7 @@ void Simulation::OnKeyInput(GLFWwindow* window, int key, int code, int action, i
 
 void Simulation::Step(const float dt)
 {
-	for (int i = 0; i < bodies.size(); i++)
+	for (size_t i = 0; i < bodies.size(); i++)
 	{
 		bodies[i].Update(dt);
 	}
@@ -170,7 +170,7 @@ void Simulation::Step(const float dt)
 
 	for (int i = 0; i < POSITION_ITERS; i++)
 	{
-		for (auto manifold : manifolds)
+		for (auto& manifold : manifolds)
 		{
 			manifold.SolvePositions();
 		}
@@ -202,7 +202,7 @@ void Simulation::Update()
 	glm::mat4 P = Camera::GetInstance().GetProjectionMatrix();
 	VP = P * V;
 
-	for (auto b : bodies)
+	for (auto& b : bodies)
 	{
 		b.Render();
 	}
@@ -213,9 +213,9 @@ void Simulation::Update()
 
 
 
-	for (auto m : manifolds)
+	for (auto& m : manifolds)
 	{
-		for (auto contact : m.contacts)
+		for (auto& contact : m.contacts)
 		{
 			T = glm::translate(contact.GetPosition());
 			M = T;
@@ -229,22 +229,22 @@ void Simulation::Update()
 	//惯性移动（鼠标放在窗口角落）
 	if (panLeft)
 	{
-		yaw += s * MOUSE_SENSITIVITY;
+		yaw += s * (float)MOUSE_SENSITIVITY;
 		Camera::GetInstance().Rotate(yaw, pitch, 0);
 	}
 	if (panRight)
 	{
-		yaw -= s * MOUSE_SENSITIVITY;
+		yaw -= s * (float)MOUSE_SENSITIVITY;
 		Camera::GetInstance().Rotate(yaw, pitch, 0);
 	}
 	if (panTop)
 	{
-		pitch -= s * MOUSE_SENSITIVITY;
+		pitch -= s * (float)MOUSE_SENSITIVITY;
 		Camera::GetInstance().Rotate(yaw, pitch, 0);
 	}
 	if (panBot)
 	{
-		pitch += s * MOUSE_SENSITIVITY;
+		pitch += s * (float)MOUSE_SENSITIVITY;
 		Camera::GetInstance().Rotate(yaw, pitch, 0);
 	}
 

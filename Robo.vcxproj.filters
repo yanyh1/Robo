@@ -75,9 +75,6 @@
     <ClInclude Include="Physics\ConstraintCommon.h">
       <Filter>Physics\Constraints</Filter>
     </ClInclude>
-    <ClInclude Include="Simulation\CompositeBodyTest.h">
-      <Filter>Simulation</Filter>
-    </ClInclude>
     <ClInclude Include="Physics\MouseJoint.h">
       <Filter>Physics\Constraints</Filter>
     </ClInclude>
@@ -160,9 +157,6 @@
     </ClCompile>
     <ClCompile Include="Physics\Contact.cpp">
       <Filter>Physics\Constraints</Filter>
-    </ClCompile>
-    <ClCompile Include="Simulation\CompositeBodyTest.cpp">
-      <Filter>Simulation</Filter>
     </ClCompile>
     <ClCompile Include="Physics\PositionJoint.cpp">
       <Filter>Physics\Constraints</Filter>
