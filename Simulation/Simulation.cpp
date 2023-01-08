@@ -13,6 +13,7 @@
 #include "PrimitiveQuery.h"
 #include "Line.h"
 #include "BroadPhase.h"
+#include "../SystemManager.h"
 
 #define MOUSE_SENSITIVITY 0.1
 #define FOV 45.0
@@ -21,7 +22,7 @@
 #define POSITION_ITERS 3
 
 Simulation::Simulation()
-	:firstMouseCB(false), stepContinous(true), stepOneFrame(false), picked(false)
+	:firstMouseCB(false), stepContinous(true), stepOneFrame(false), picked(false), sphere(nullptr)
 {
 	panLeft = panRight = panBot = panTop = false;
 }
@@ -48,17 +49,9 @@ void Simulation::OnInit(GLFWwindow* window)
 	std::vector<int> indices;
 
 	ModelData model;
-	ParseObj("resources/cylinder.obj", mesh);
-	mesh.GetModelData(model);
-	cylinder = new Model(model.vertices, model.indices);
 	CreateSphere(0.03, model);
 	sphere = new Model(model.vertices, model.indices);
-	CreateHemiSphere(1.0, model);
-	hemiSphere = new Model(model.vertices, model.indices);
 
-	// reserving space for global data
-	// otherwise any pointers or references to container elements will get invalidated on using push_back
-	// because push_back reallocates memory, and old memory locations are invalidated
 	bodies.reserve(5000);
 	colliders.reserve(5000);
 	manifolds.reserve(5000);
@@ -108,27 +101,6 @@ void Simulation::OnMouseMove(GLFWwindow* window, double x, double y)
 
 	Camera::GetInstance().Rotate(yaw, pitch, 0);
 
-	if (picked)
-	{
-		// read pixel depth at mouse click position - gives screen space 3D point
-		float mouseZ = 0;
-		glReadPixels(mouseX, height - mouseY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &mouseZ);
-
-		// convert the point from screen space to world space
-		glm::vec3 sMouse = glm::vec3(mouseX, height - mouseY, mouseZ);
-		glm::mat4 MV = Camera::GetInstance().GetViewMatrix();
-		glm::mat4 P = Camera::GetInstance().GetProjectionMatrix();
-		glm::vec3 wMouse = glm::unProject(sMouse, MV, P, glm::vec4(0, 0, width, height));
-		glm::vec3 prevMouse = mouseJoint.GetMouseAnchor();
-
-		if (glm::length2(prevMouse - wMouse) > 1.0f)
-		{
-			picked = false;
-			return;
-		}
-
-		mouseJoint.SetMouseAnchor(wMouse);
-	}
 }
 
 void Simulation::OnKeyInput(GLFWwindow* window, int key, int code, int action, int mods)
@@ -175,22 +147,22 @@ void Simulation::Step(const float dt)
 		bodies[i].Update(dt);
 	}
 
-	// To Do: Exploit frame coherence to cache contacts 
-	// instead of rebuilding them each frame
-	for (int i = 0; i < manifolds.size(); i++)
-		manifolds[i].contacts.clear();
+	// TODO cache contacts 
+	for (auto& minifold : manifolds)
+	{
+		minifold.contacts.clear();
+	}
 	manifolds.clear();
 
 	BroadPhase::GetInstance().Update();
 
-	auto colliderPairs = BroadPhase::GetInstance().ComputePairs();
-
-	for (auto pair : colliderPairs)
+	auto& colliderPairs = BroadPhase::GetInstance().ComputePairs();
+	for (auto& pair : colliderPairs)
 		DetectCollision(manifolds, pair.first, pair.second);
 
 	for (int i = 0; i < VELOCITY_ITERS; i++)
 	{
-		for (auto manifold : manifolds)
+		for (auto& manifold : manifolds)
 		{
 			manifold.SolveVelocities();
 		}
@@ -204,20 +176,6 @@ void Simulation::Step(const float dt)
 		}
 	}
 
-	for (int i = 0; i < 20; i++)
-	{
-		for (auto j : posJoints)
-			j.Solve();
-	}
-
-	for (auto c : planeConstraints)
-		c.Solve();
-
-	for (auto j : revJoints)
-		j.Solve();
-
-	if (picked)
-		mouseJoint.Solve();
 }
 
 void Simulation::Update()
@@ -225,7 +183,7 @@ void Simulation::Update()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Physics Update
-	const static float dt = 1.0f / 30.0f;
+	float dt = dtG;
 
 	if (!stepContinous)
 		Step(dt);
@@ -249,58 +207,26 @@ void Simulation::Update()
 		b.Render();
 	}
 
+#ifdef gizmos
 	BroadPhase::GetInstance().Render();
+#endif // gizmos
 
-	//for (auto m : manifolds)
-	//{
-	//	for (auto contact : m.contacts)
-	//	{
-	//		T = glm::translate(contact.GetPosition());
-	//		M = T;
-	//		MVP = VP * M;
-	//		sphere->SetMVP(MVP);
-	//		sphere->Render();
-	//	}
-	//}
 
-	for (auto j : revJoints)
+
+	for (auto m : manifolds)
 	{
-		T = glm::translate(j.GetAnchor());
-		glm::vec3 axis = j.GetAxis();
-		if (axis.x > 0.9f)
-			R = glm::toMat4(glm::angleAxis(1.57f, glm::vec3(0, 0, 1.0)));
-		else if (axis.z > 0.9f)
-			R = glm::toMat4(glm::angleAxis(1.57f, glm::vec3(1.0, 0, 0)));
-		else
-			R = glm::mat4(1.0);
-		S = glm::scale(glm::vec3(0.05, 0.3, 0.05));
-		cylinder->SetMVP(VP * T * R * S);
-		cylinder->SetColor(glm::vec3(0.7, 0.7, 0.6));
-		cylinder->Render();
-	}
-
-	for (auto j : posJoints)
-	{
-		glm::vec3 p1 = j.GetAnchorA();
-		glm::vec3 p2 = j.GetBodyA()->GetCentroid();
-		M = glm::translate(p1) * glm::scale(glm::vec3(0.0125f));
-		MVP = VP * M;
-		sphere->SetColor(glm::vec3(1, 0, 0));
-		sphere->SetMVP(MVP);
-		sphere->Render();
-
-		p1 = j.GetAnchorB();
-		p2 = j.GetBodyB()->GetCentroid();
-		glm::quat q = j.GetBodyB()->GetOrientation();
-		//R = glm::toMat4(q) * glm::rotate(-1.5714f, glm::vec3(0, 0, 1));
-		M = glm::translate(p1) * R * glm::scale(glm::vec3(0.025f));
-		MVP = VP * M;
-		hemiSphere->SetColor(glm::vec3(0.643, 0.827, 0.435));
-		hemiSphere->SetMVP(MVP);
-		hemiSphere->Render();
+		for (auto contact : m.contacts)
+		{
+			T = glm::translate(contact.GetPosition());
+			M = T;
+			MVP = VP * M;
+			sphere->SetMVP(MVP);
+			sphere->Render();
+		}
 	}
 
 	float s = 3.0f;
+	//惯性移动（鼠标放在窗口角落）
 	if (panLeft)
 	{
 		yaw += s * MOUSE_SENSITIVITY;

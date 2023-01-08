@@ -44,19 +44,12 @@ protected:
 	std::vector<Body> bodies;
 	std::vector<Collider*> colliders;
 	std::vector<Manifold> manifolds;
-	std::vector<PositionJoint> posJoints;
-	std::vector<PlaneConstraint> planeConstraints;
-	std::vector<RevoluteJoint> revJoints;
 
-	MouseJoint mouseJoint;
 	bool picked;
 
-	Model* cylinder;
 	Model* sphere;
-	Model* hemiSphere;
 
 public:
-	static float dtG;
 	Simulation();
 
 	void AddObjToScene(const std::string& file, glm::vec3 position, glm::quat orientation, float mass, glm::vec3 color, float restitution = 0.3f, float scale = 1.0f);

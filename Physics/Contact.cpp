@@ -1,10 +1,12 @@
 
 #include "Contact.h"
+#include "../SystemManager.h"
 
 #define BAUMGARTE 0.2f
 #define VELOCITYSLOP 0.5f
 #define POSITIONSLOP 0.001f
 
+//在Contact初始化的时候，需要同时初始化两个constrain相关的东西
 Contact::Contact(Body* A, Body* B, const glm::vec3& position, const glm::vec3& normal, const float penetration)
 	: A(A), B(B), position(position), normal(normal), penetration(penetration), impulseSumN(0.0f)
 {
@@ -12,11 +14,11 @@ Contact::Contact(Body* A, Body* B, const glm::vec3& position, const glm::vec3& n
 
 	rA = position - A->GetCentroid();
 	rB = position - B->GetCentroid();
-
+	//计算normal constrain的Jacobian、bias和有效质量
 	CalculateJacobian(JN, normal);
 	CalculateBias();
 	kn = CalculateEffectiveMass(JN, A, B);
-
+	//计算Friction constrain的Jacobian有效质量
 	for (int i = 0; i < 2; i++)
 	{
 		impulseSumT[i] = 0.0f;
@@ -36,13 +38,13 @@ void Contact::CalculateJacobian(Jacobian& J, const glm::vec3& axis)
 {
 	J = Jacobian(-axis, -glm::cross(rA, axis), axis, glm::cross(rB, axis));
 }
-
+//Slop bias(OK)
 void Contact::CalculateBias()
 {
 	// restitution
 	float e = (A->GetRestitution() + B->GetRestitution()) * 0.5f;
 	float vSep = CalculateNormalConstraint();
-	bias = e * (glm::max(vSep - VELOCITYSLOP, 0.0f));
+	bias = e * (glm::max(penetration - VELOCITYSLOP, 0.0f));
 }
 
 void Contact::SolveVelocities(Velocity& vA, Velocity& vB)
@@ -88,6 +90,7 @@ void Contact::SolvePositions(Position& pA, Position& pB)
 	float K = CalculateEffectiveMass(JN, A, B);
 	float C = -BAUMGARTE * (glm::max(penetration - POSITIONSLOP, 0.0f));
 	float lambda = K > 0.0f ? -C / K : 0.0f;
+	//float lambda = -C / K;
 	glm::vec3 P = lambda * normal;
 
 	pA.c -= P * A->GetInvMass();
@@ -132,7 +135,6 @@ void Manifold::SolveVelocities()
 
 void Manifold::SolvePositions()
 {
-	assert(contacts.size() > 0);
 	Body* A = contacts[0].A;
 	Body* B = contacts[0].B;
 	glm::vec3 c1 = A->GetCentroid();

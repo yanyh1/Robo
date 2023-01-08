@@ -21,7 +21,7 @@ float myrandom()
 }
 bool checkvaild(std::vector<glm::vec3>& history, glm::vec3 input)
 {
-	for (auto position : history)
+	for (auto& position : history)
 	{
 		if (glm::l2Norm(input, position) < 2.f)
 		{
@@ -69,22 +69,22 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 	int howmany = 0;
 
 	//goto BallSimu;
-	for (float spy = 20.f; spy < 50.f; spy += 3.8f)
+	for (float spy = 20.f; spy < 50.f; spy += 4.8f)
 	{
-		for (float spx = 10.0f; spx < 30.f; spx += 2.8f)
+		for (float spx = 15.0f; spx < 30.f; spx += 3.2f)
 		{
 			Simulation::AddObjToScene("resources/box.obj",
 				glm::vec3(spx, spy, myrandom() * 20),
 				glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
-				1.0f,
-				(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)));
+				.4f,
+				(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)), 0.3f, 2.4f);
 			howmany++;
 		}
 	}
 	std::cout << "生成" << howmany << "个boxes" << std::endl;
 	//生成64个boxes
 	howmany = 0;
-	//goto END;
+	goto END;
 
 BallSimu:
 	float radius = 0.8f;
