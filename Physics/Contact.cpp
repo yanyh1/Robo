@@ -24,18 +24,14 @@ Contact::Contact(Body* A, Body* B, const glm::vec3& position, const glm::vec3& n
 		kt[i] = CalculateEffectiveMass(JT[i], A, B);
 	}
 }
-
-float Contact::CalculateSeparatingVelocity() const
+//Normal constraint(OK)
+float Contact::CalculateNormalConstraint() const
 {
-	glm::vec3 vA = A->GetVelocity();
-	vA += glm::cross(A->GetAngularVelocity(), rA);
-
-	glm::vec3 vB = B->GetVelocity();
-	vB += glm::cross(B->GetAngularVelocity(), rB);
-
+	glm::vec3 vA = A->GetVelocity() + glm::cross(A->GetAngularVelocity(), rA);
+	glm::vec3 vB = B->GetVelocity() + glm::cross(B->GetAngularVelocity(), rB);
 	return glm::dot((vB - vA), normal);
 }
-
+//3-Compute the Jacobian J for non-penetration and friction constraints(OK)
 void Contact::CalculateJacobian(Jacobian& J, const glm::vec3& axis)
 {
 	J = Jacobian(-axis, -glm::cross(rA, axis), axis, glm::cross(rB, axis));
@@ -43,18 +39,18 @@ void Contact::CalculateJacobian(Jacobian& J, const glm::vec3& axis)
 
 void Contact::CalculateBias()
 {
-	bias = 0.0f;
 	// restitution
 	float e = (A->GetRestitution() + B->GetRestitution()) * 0.5f;
-	float vSep = CalculateSeparatingVelocity();
-	bias += e * (glm::min(vSep + VELOCITYSLOP, 0.0f));
+	float vSep = CalculateNormalConstraint();
+	bias = e * (glm::max(vSep - VELOCITYSLOP, 0.0f));
 }
 
-void Contact::SolveVelocities(Velocity& vA, Velocity& vB, const float dt = (1.0f/60.0f))
+void Contact::SolveVelocities(Velocity& vA, Velocity& vB)
 {
-	float vSep = CalculateSeparatingVelocity();
-	if (vSep >= 0)
+	if (CalculateNormalConstraint() >= 0)
+	{
 		return;
+	}
 
 	float lambda, oldImpulse;
 	float uf = (A->GetFriction() + B->GetFriction()) * 0.5f;
@@ -104,26 +100,17 @@ void Contact::SolvePositions(Position& pA, Position& pB)
 
 void Manifold::SolveVelocities()
 {
-	assert(contacts.size() > 0);
 	Body* A = contacts[0].A;
 	Body* B = contacts[0].B;
 
 	if (A->GetInvMass() != 0 && B->GetInvMass() != 0)
 	{
-		if (A->IsAwake() ^ B->IsAwake())
+		if (!A->IsAwake() || !B->IsAwake())
 		{
-			if (A->IsAwake())
-				B->SetAwake(true);
-			else
-				A->SetAwake(true);
+			B->SetAwake(true);
+			A->SetAwake(true);
 		}
 	}
-
-	// temp hack - without this things blow up after everything comes to rest state
-	if (!A->IsAwake())
-		A->SetAwake(false);
-	if (!B->IsAwake())
-		B->SetAwake(false);
 
 	glm::vec3 v1 = A->GetVelocity();
 	glm::vec3 w1 = A->GetAngularVelocity();

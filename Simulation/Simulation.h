@@ -56,9 +56,10 @@ protected:
 	Model* hemiSphere;
 
 public:
+	static float dtG;
 	Simulation();
 
-	void AddObjToScene(const std::string& file, glm::vec3 position, glm::quat orientation, float mass, glm::vec3 color);
+	void AddObjToScene(const std::string& file, glm::vec3 position, glm::quat orientation, float mass, glm::vec3 color, float restitution = 0.3f, float scale = 1.0f);
 
 	~Simulation() = default;
 

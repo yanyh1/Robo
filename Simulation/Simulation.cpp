@@ -17,7 +17,7 @@
 #define MOUSE_SENSITIVITY 0.1
 #define FOV 45.0
 #define MAX_BODIES 1000
-#define VELOCITY_ITERS 7
+#define VELOCITY_ITERS 5
 #define POSITION_ITERS 3
 
 Simulation::Simulation()
@@ -251,17 +251,17 @@ void Simulation::Update()
 
 	BroadPhase::GetInstance().Render();
 
-	for (auto m : manifolds)
-	{
-		for (auto contact : m.contacts)
-		{
-			T = glm::translate(contact.GetPosition());
-			M = T;
-			MVP = VP * M;
-			sphere->SetMVP(MVP);
-			sphere->Render();
-		}
-	}
+	//for (auto m : manifolds)
+	//{
+	//	for (auto contact : m.contacts)
+	//	{
+	//		T = glm::translate(contact.GetPosition());
+	//		M = T;
+	//		MVP = VP * M;
+	//		sphere->SetMVP(MVP);
+	//		sphere->Render();
+	//	}
+	//}
 
 	for (auto j : revJoints)
 	{
@@ -327,13 +327,14 @@ void Simulation::Update()
 
 void Simulation::AddObjToScene(const std::string& file, glm::vec3 position,
 	glm::quat orientation, float mass,
-	glm::vec3 color)
+	glm::vec3 color, float restitution, float scale)
 {
 	HMesh mesh;
 	ModelData model;
 	Collider* collider;
 	Body body;
 	ParseObj(file, mesh);
+	mesh.Scale(glm::vec3(1.f) * scale);
 	mesh.GetModelData(model);
 	collider = new HullCollider(mesh);
 	body.SetModelData(model);
@@ -341,6 +342,7 @@ void Simulation::AddObjToScene(const std::string& file, glm::vec3 position,
 	body.SetOrientation(orientation);
 	body.SetMass(mass);
 	body.SetColor(color);
+	body.SetRestitution(restitution);
 	bodies.push_back(body);
 	bodies.back().AddCollider(collider);
 	colliders.push_back(collider);

@@ -66,6 +66,7 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 		glm::vec3(0.7, 0.7, 0.1));
 
 	srand(time(NULL));
+	int howmany = 0;
 
 	//goto BallSimu;
 	for (float spy = 20.f; spy < 50.f; spy += 3.8f)
@@ -77,9 +78,12 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 				glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
 				1.0f,
 				(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)));
-
+			howmany++;
 		}
 	}
+	std::cout << "生成" << howmany << "个boxes" << std::endl;
+	//生成64个boxes
+	howmany = 0;
 	//goto END;
 
 BallSimu:
@@ -89,7 +93,7 @@ BallSimu:
 	body.SetMass(1.f);
 	body.SetColor(glm::vec3(1.0, 0.9, 0.3));
 	body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));
-
+	body.SetRestitution(1.f);
 	for (float spy = 15.0f; spy < 40.f; spy += 2.8f)
 	{
 		for (float spx = 10.0f; spx < 30.f; spx += 1.8f)
@@ -101,10 +105,15 @@ BallSimu:
 				collider = new SphereCollider(radius);
 				bodies.back().AddCollider(collider);
 				colliders.push_back(collider);
+				howmany++;
 				if (!HIGHDEMAND)break;
 			}
 		}
 	}
+	std::cout << "生成" << howmany << "个balls" << std::endl;
+	//生成108个balls
+
+
 END:
 	BroadPhase::GetInstance().Init(colliders);
 }

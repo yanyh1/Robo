@@ -51,6 +51,7 @@ private:
 	glm::mat3 invInertia;
 
 	float density;
+	//恢复系数，和弹性碰撞速度损失有关
 	float restitution;
 	float friction;
 

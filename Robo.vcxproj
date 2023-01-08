@@ -124,6 +124,7 @@
     <ClInclude Include="Simulation\RevoluteJointTest.h" />
     <ClInclude Include="Simulation\Simulation.h" />
     <ClInclude Include="Simulation\Simulations.h" />
+    <ClInclude Include="SystemManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Geometry\Geometry.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="Simulation\PositionJointTest.cpp" />
     <ClCompile Include="Simulation\RevoluteJointTest.cpp" />
     <ClCompile Include="Simulation\Simulation.cpp" />
+    <ClCompile Include="SystemManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

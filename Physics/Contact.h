@@ -1,17 +1,10 @@
-
+﻿
 #pragma once
 
 #include <glm/glm.hpp>
 #include "Geometry.h"
 #include "ConstraintCommon.h"
 #include "Body.h"
-
-// Ref: Sequential Impules - Erin Catto ?Iterative Dynamics with Temporal Coherence
-// Contact constraint stops the bodies from interpenetrating at the contact point.
-// Position is corrected by adding bias to the velocity constraint.
-// Note: Zero restitution cannot be simulated with this correction method
-// To Do: Post-stabilization - ref : box2D, https://www.cs.rutgers.edu/~dpai/papers/ClinePai03.pdf
-// List of stabilization methods: https://github.com/erincatto/Box2D/blob/master/Box2D/Box2D/Dynamics/b2Island.cpp
 
 // contact data for a collider pair
 class Contact
@@ -29,7 +22,6 @@ private:
 	float impulseSumN;
 	float impulseSumT[2];
 
-	// vectors from each body's centroid to the contact point
 	glm::vec3 rA;
 	glm::vec3 rB;
 
@@ -45,7 +37,7 @@ private:
 
 private:
 	// Projection of relative velocity along the normal 
-	float CalculateSeparatingVelocity() const;
+	float CalculateNormalConstraint() const;
 
 	// Calculates the Jacobian for the normal/tangent part
 	void CalculateJacobian(Jacobian& J, const glm::vec3& axis);
@@ -62,7 +54,7 @@ public:
 	glm::vec3 GetTangent(int i) const { return tangent[i]; }
 
 	// Solves the contact by applying impulses
-	void SolveVelocities(Velocity& A, Velocity& B, const float dt);
+	void SolveVelocities(Velocity& A, Velocity& B);
 
 	void SolvePositions(Position& A, Position& B);
 

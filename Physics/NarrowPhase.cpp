@@ -355,7 +355,7 @@ void DetectSphereWithSphere(std::vector<Manifold>& manifolds, SphereCollider* A,
 	if (dist2 > rSum)
 		return;
 
-	glm::normalize(normal);
+	normal = glm::normalize(normal);
 
 
 	glm::vec3 PA = CA + A->GetRadius() * normal;

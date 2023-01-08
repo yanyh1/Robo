@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "Simulation/Simulations.h"
+#include "SystemManager.h"
 
 Simulation* sim = &CollisionDetectionTest::GetInstance();
 
@@ -69,7 +70,8 @@ int main()
 		sim->Update();
 
 		glfwSwapBuffers(window);
-		std::cout << "FPS: " << 1 / (((double)(clock() - fpsClock)) / CLOCKS_PER_SEC) << std::endl;
+		dtG = (((double)(clock() - fpsClock)) / CLOCKS_PER_SEC);
+		std::cout << "FPS: " << 1 / dtG << std::endl;
 		fpsClock = clock();
 	}
 
