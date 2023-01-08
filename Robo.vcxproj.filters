@@ -132,9 +132,6 @@
     <ClInclude Include="Physics\Spring.h">
       <Filter>Physics\Constraints</Filter>
     </ClInclude>
-    <ClInclude Include="Simulation\ClothSimulation.h">
-      <Filter>Simulation</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
@@ -240,9 +237,6 @@
     </ClCompile>
     <ClCompile Include="Physics\Spring.cpp">
       <Filter>Physics\Constraints</Filter>
-    </ClCompile>
-    <ClCompile Include="Simulation\ClothSimulation.cpp">
-      <Filter>Simulation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

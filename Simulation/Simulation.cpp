@@ -21,7 +21,7 @@
 #define POSITION_ITERS 3
 
 Simulation::Simulation()
-	:debugDraw(false), firstMouseCB(false), stepContinous(true), stepOneFrame(false), picked(false)
+	:firstMouseCB(false), stepContinous(true), stepOneFrame(false), picked(false)
 {
 	panLeft = panRight = panBot = panTop = false;
 }
@@ -39,7 +39,8 @@ void Simulation::OnInit(GLFWwindow* window)
 	glEnable(GL_DEPTH_TEST); // enables depth-testing
 	glDepthFunc(GL_LESS);    // interpret smaller values as closer
 	Camera::GetInstance().SetProjection(45.0, (float)width / (float)height);
-	Camera::GetInstance().SetPosition(glm::vec3(0, 1, 20));
+	Camera::GetInstance().SetPosition(glm::vec3(0, 10, 40));
+
 
 	HMesh mesh;
 	ParseObj("resources/box.obj", mesh);
@@ -170,9 +171,6 @@ void Simulation::OnKeyInput(GLFWwindow* window, int key, int code, int action, i
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-
-	if (key == GLFW_KEY_RIGHT_ALT && action == GLFW_PRESS)
-		debugDraw = !debugDraw;
 
 	if (key >= 0 && key < 1024)
 	{

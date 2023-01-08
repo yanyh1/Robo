@@ -30,13 +30,13 @@ void BroadPhase::Init(std::vector<Collider*>& colliders)
 	{
 		switch (c->GetShape())
 		{
-		case (Collider::Sphere) :
+		case (Collider::Sphere):
 			max = glm::vec3(static_cast<SphereCollider*>(c)->GetRadius());
 			min = -max;
 			aabbs.push_back(new AABB(min, max, c));
 			aabbsL.push_back(new AABB(min, max, c));
 			break;
-		case (Collider::Hull) :
+		case (Collider::Hull):
 			X = c->GetBody()->GlobalToLocalVec(glm::vec3(1.0, 0, 0));
 			Y = c->GetBody()->GlobalToLocalVec(glm::vec3(0, 1.0, 0));
 			Z = c->GetBody()->GlobalToLocalVec(glm::vec3(0, 0, 1.0));
@@ -126,7 +126,7 @@ std::vector<std::pair<Collider*, Collider*>>& BroadPhase::ComputePairs()
 	for (int iA = 0; iA < aabbs.size(); iA++)
 	{
 		for (int iB = iA + 1; iB < aabbs.size(); iB++)
-		{ 
+		{
 			if (aabbs[iA]->collider->GetBody()->GetGroup() != 0)
 			{
 				if (aabbs[iA]->collider->GetBody()->GetGroup() == aabbs[iB]->collider->GetBody()->GetGroup())
@@ -134,11 +134,6 @@ std::vector<std::pair<Collider*, Collider*>>& BroadPhase::ComputePairs()
 			}
 
 			if (aabbs[iA]->collider->GetBody()->GetInvMass() == 0.0f && aabbs[iB]->collider->GetBody()->GetInvMass() == 0.0f)
-				continue;
-
-			if (aabbs[iA]->collider->GetShape() == Collider::Sphere && aabbs[iB]->collider->GetBody()->GetGroup() == 1)
-				continue;
-			if (aabbs[iB]->collider->GetShape() == Collider::Sphere && aabbs[iA]->collider->GetBody()->GetGroup() == 1)
 				continue;
 
 			if (Overlap(aabbs[iA], aabbs[iB]))
@@ -153,7 +148,7 @@ void BroadPhase::Update()
 {
 	glm::vec3 v[8];
 	for (int i = 0; i < aabbsL.size(); i++)
-	{ 
+	{
 		AABB* aabbL = aabbsL[i];
 
 		if (aabbL->collider->GetShape() == Collider::Sphere)

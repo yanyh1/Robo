@@ -7,6 +7,8 @@
 #include "SphereCollider.h"
 #include "BroadPhase.h"
 
+const bool HIGHDEMAND = false;
+
 CollisionDetectionTest& CollisionDetectionTest::GetInstance()
 {
 	static CollisionDetectionTest instance;
@@ -65,38 +67,41 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 
 	srand(time(NULL));
 	goto BallSimu;
-	for (float spy = 20.f; spy < 50.f; spy += 2.8f)
+	for (float spy = 20.f; spy < 50.f; spy += 3.8f)
 	{
-		for (float spx = 5.0f; spx < 30.f; spx += 1.8f)
+		for (float spx = 5.0f; spx < 30.f; spx += 2.8f)
 		{
-			for (int i = 0; i < 4; i++) {
-				Simulation::AddObjToScene("resources/box.obj",
-					glm::vec3(spx, spy, myrandom() * 20),
-					glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
-					1.0f,
-					(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)));
-			}
+			Simulation::AddObjToScene("resources/box.obj",
+				glm::vec3(spx, spy, myrandom() * 20),
+				glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
+				1.0f,
+				(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)));
+
 		}
 	}
 	goto END;
 
 BallSimu:
-	float radius = 0.5f;
+	float radius = 0.8f;
 	CreateSphere(radius, model);
 	body.SetModelData(model);
 	body.SetMass(1.f);
 	body.SetColor(glm::vec3(1.0, 0.9, 0.3));
 	body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));
 
-	for (float spy = 15.0f; spy < 40.f; spy += 3.8f)
+	for (float spy = 15.0f; spy < 40.f; spy += 2.8f)
 	{
-		for (float spx = 10.0f; spx < 30.f; spx += 2.8f)
+		for (float spx = 10.0f; spx < 30.f; spx += 1.8f)
 		{
-			body.SetPosition(glm::vec3(spx + myrandom(), spy, myrandom() * 5));
-			bodies.push_back(body);
-			collider = new SphereCollider(radius);
-			bodies.back().AddCollider(collider);
-			colliders.push_back(collider);
+
+			for (int i = 0; i < 4; i++) {
+				body.SetPosition(glm::vec3(spx + myrandom(), spy, myrandom() * 5));
+				bodies.push_back(body);
+				collider = new SphereCollider(radius);
+				bodies.back().AddCollider(collider);
+				colliders.push_back(collider);
+				if (!HIGHDEMAND)break;
+			}
 		}
 	}
 END:

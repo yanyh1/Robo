@@ -38,9 +38,6 @@ protected:
 	// store the state of pressed keys
 	bool keys[1024];
 
-	// toggle drawing wire-frame mode
-	bool debugDraw;
-
 	bool stepContinous;
 	bool stepOneFrame;
 

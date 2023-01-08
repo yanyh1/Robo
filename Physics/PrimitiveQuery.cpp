@@ -9,7 +9,7 @@ bool QueryPoint(Collider* collider, const glm::vec3& point)
 {
 	switch (collider->GetShape())
 	{
-	case (Collider::Hull) :
+	case (Collider::Hull):
 	{
 		HullCollider* c = static_cast<HullCollider*>(collider);
 		for (int i = 0; i < c->GetFaceCount(); i++)
@@ -23,14 +23,14 @@ bool QueryPoint(Collider* collider, const glm::vec3& point)
 		}
 		return true;
 	}
-	case (Collider::Sphere) :
+	case (Collider::Sphere):
 	{
 		SphereCollider* c = static_cast<SphereCollider*>(collider);
 		glm::vec3 C = c->GetBody()->LocalToGlobalPoint(c->GetCentroid());
 		float d2 = glm::length2(point - C);
-		return (d2 < c->GetRadius() * c->GetRadius());
+		return (d2 < c->GetRadius()* c->GetRadius());
 	}
-	default :
+	default:
 		return false;
 	}
 }
@@ -39,7 +39,7 @@ void QueryPoint(std::vector<ParticleContact>& contacts, Collider* collider, Part
 {
 	switch (collider->GetShape())
 	{
-	case (Collider::Hull) :
+	case (Collider::Hull):
 	{
 		glm::vec3 n(0);
 		float d(0);
@@ -57,7 +57,7 @@ void QueryPoint(std::vector<ParticleContact>& contacts, Collider* collider, Part
 		contacts.push_back(ParticleContact(particle, n, -d));
 		break;
 	}
-	case (Collider::Sphere) :
+	case (Collider::Sphere):
 	{
 		SphereCollider* c = static_cast<SphereCollider*>(collider);
 		glm::vec3 C = c->GetBody()->LocalToGlobalPoint(c->GetCentroid());
@@ -66,7 +66,7 @@ void QueryPoint(std::vector<ParticleContact>& contacts, Collider* collider, Part
 		if (d < c->GetRadius() * c->GetRadius() * 1.1f)
 		{
 			d = std::sqrtf(d);
-			contacts.push_back(ParticleContact(particle, n/d, c->GetRadius()-d));
+			contacts.push_back(ParticleContact(particle, n / d, c->GetRadius() - d));
 		}
 		break;
 	}
@@ -131,12 +131,11 @@ bool QueryPoint(const glm::vec3& P, const std::vector<glm::vec3>& verts, const g
 
 bool Overlap(AABB* A, AABB* B)
 {
-	if (A->max.x < B->min.x || A->min.x > B->max.x)	
+	if (A->max.x < B->min.x || A->min.x > B->max.x ||
+		A->max.y < B->min.y || A->min.y > B->max.y ||
+		A->max.z < B->min.z || A->min.z > B->max.z)
+	{
 		return false;
-	if (A->max.y < B->min.y || A->min.y > B->max.y)	
-		return false;
-	if (A->max.z < B->min.z || A->min.z > B->max.z)
-		return false;
-	
+	}
 	return true;
 }

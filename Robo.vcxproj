@@ -110,7 +110,6 @@
     <ClInclude Include="Physics\RevoluteJoint.h" />
     <ClInclude Include="Physics\SphereCollider.h" />
     <ClInclude Include="Physics\Spring.h" />
-    <ClInclude Include="Simulation\ClothSimulation.h" />
     <ClInclude Include="Simulation\CollisionDetectionTest.h" />
     <ClInclude Include="Simulation\CompositeBodyTest.h" />
     <ClInclude Include="Simulation\Dominoes.h" />
@@ -150,7 +149,6 @@
     <ClCompile Include="Physics\RevoluteJoint.cpp" />
     <ClCompile Include="Physics\SphereCollider.cpp" />
     <ClCompile Include="Physics\Spring.cpp" />
-    <ClCompile Include="Simulation\ClothSimulation.cpp" />
     <ClCompile Include="Simulation\CollisionDetectionTest.cpp" />
     <ClCompile Include="Simulation\CompositeBodyTest.cpp" />
     <ClCompile Include="Simulation\Dominoes.cpp" />
