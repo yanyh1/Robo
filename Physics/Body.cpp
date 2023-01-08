@@ -369,9 +369,6 @@ void Body::Update(const float dt)
 	if (invMass == 0.0)
 		return;
 
-	if (!awake)
-		return;
-
 	invInertia = glm::transpose(R) * localInvInertia * R;
 
 	velocity += invMass * forceSum * dt;

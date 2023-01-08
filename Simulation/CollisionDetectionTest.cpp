@@ -52,8 +52,8 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 
 	// slope
 	Simulation::AddObjToScene("resources/floor.obj",
-		glm::vec3(5, -3.0, 0),
-		glm::angleAxis(60.0f, glm::vec3(0, 0, 1)),
+		glm::vec3(25, 10, 0),
+		glm::angleAxis(45.0f / 180 * glm::pi<float>(), glm::vec3(0, 0, 1)),
 		0.0f,
 		glm::vec3(0.7, 0.7, 0.6));
 	// floor
@@ -64,11 +64,11 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 		glm::vec3(0.7, 0.7, 0.1));
 
 	srand(time(NULL));
-	//goto BallSimu;
+	goto BallSimu;
 	//Create A blocker
-	for (float spy = 1.0f; spy < 40.f; spy += 3.8f)
+	for (float spy = 5.0f; spy < 40.f; spy += 3.8f)
 	{
-		for (float spx = -3.0f; spx < 10.f; spx += 2.8f)
+		for (float spx = 0.0f; spx < 10.f; spx += 2.8f)
 		{
 			Simulation::AddObjToScene("resources/box.obj",
 				glm::vec3(spx, spy, myrandom() * 5),
@@ -87,11 +87,11 @@ BallSimu:
 	body.SetColor(glm::vec3(1.0, 0.9, 0.3));
 	body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));
 
-	for (float spy = 1.0f; spy < 20.f; spy += 1.8f)
+	for (float spy = 15.0f; spy < 40.f; spy += 3.8f)
 	{
-		for (float spx = -3.0f; spx < 10.f; spx += 1.8f)
+		for (float spx = 10.0f; spx < 30.f; spx += 2.8f)
 		{
-			body.SetPosition(glm::vec3(spx, spy, myrandom() * 5));
+			body.SetPosition(glm::vec3(spx + myrandom(), spy, myrandom() * 5));
 			bodies.push_back(body);
 			collider = new SphereCollider(radius);
 			bodies.back().AddCollider(collider);

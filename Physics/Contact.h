@@ -6,7 +6,7 @@
 #include "ConstraintCommon.h"
 #include "Body.h"
 
-// Ref: Sequential Impules - Erin Catto – Iterative Dynamics with Temporal Coherence
+// Ref: Sequential Impules - Erin Catto ?Iterative Dynamics with Temporal Coherence
 // Contact constraint stops the bodies from interpenetrating at the contact point.
 // Position is corrected by adding bias to the velocity constraint.
 // Note: Zero restitution cannot be simulated with this correction method
@@ -38,7 +38,7 @@ private:
 
 	// Bias is the "work" term in the velocity constraint equation
 	// Accounts for position drift, and bounce(restitution)
-	float bias;				
+	float bias;
 
 	float kn;		// effective mass for normal impulse
 	float kt[2];	// effective mass for tangent impulse
