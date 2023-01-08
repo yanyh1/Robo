@@ -17,11 +17,6 @@ void OnMouseMove(GLFWwindow* window, double x, double y)
 	sim->OnMouseMove(window, x, y);
 }
 
-void OnMouseButton(GLFWwindow* window, int button, int action, int mods)
-{
-	sim->OnMouseButton(window, button, action, mods);
-}
-
 void OnKeyInput(GLFWwindow* window, int key, int code, int action, int mods)
 {
 	sim->OnKeyInput(window, key, code, action, mods);
@@ -61,7 +56,6 @@ int main()
 	glfwSetWindowSizeCallback(window, OnWindowResize);
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, OnMouseMove);
-	glfwSetMouseButtonCallback(window, OnMouseButton);
 	glfwSetKeyCallback(window, OnKeyInput);
 
 	// Game Loop

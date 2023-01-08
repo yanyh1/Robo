@@ -44,7 +44,7 @@ bool QueryFaceAxes(FaceQuery& query, HullCollider* A, HullCollider* B);
 // Edge Pruing - Guass Map Optimization - Dirk Gregorius - GDC 2013
 // The possible separating axes are the edges that form a face on the Minkowski difference (A-B)
 // The edges found to be intersecting on the gauss map are the supporting edges - so no need to check projections
-bool QueryEdgeAxes(EdgeQuery& query, HullCollider*A, HullCollider* B);
+bool QueryEdgeAxes(EdgeQuery& query, HullCollider* A, HullCollider* B);
 
 // @params A, B, C, D are faces of hull that represent points on the Gauss Map
 // The arcs connecting the faces represent the edges
@@ -52,7 +52,7 @@ bool QueryEdgeAxes(EdgeQuery& query, HullCollider*A, HullCollider* B);
 // A-B is arc1(edge from hull A) and C-D is arc2(edge from hull B)
 bool IsMinkowskiFace(const glm::vec3& A, const glm::vec3& B, const glm::vec3& B_x_A, const glm::vec3& C, const glm::vec3& D, const glm::vec3& D_x_C);
 
-void CreateEdgeContact(std::vector<Manifold>& manifolds, HullCollider* A, HullCollider*B, const EdgeQuery& query);
+void CreateEdgeContact(std::vector<Manifold>& manifolds, HullCollider* A, HullCollider* B, const EdgeQuery& query);
 
 // the most anti-parallel face of incident hull compared to reference face
 int FindIncidentFace(HullCollider* incident, HullCollider* reference, int referenceFace);
@@ -63,9 +63,9 @@ void CreateFaceContact(std::vector<Manifold>& manifolds, HullCollider* incident,
 
 void DetectHullVsHull(std::vector<Manifold>& manifolds, HullCollider* A, HullCollider* B);
 
-void DetectSphereVsSphere(std::vector<Manifold>& manifolds, SphereCollider* A, SphereCollider* B);
+void DetectSphereWithSphere(std::vector<Manifold>& manifolds, SphereCollider* A, SphereCollider* B);
 
-void DetectSphereVsHull(std::vector<Manifold>& manifolds, SphereCollider* A, HullCollider* B);
+void DetectSphereWithHull(std::vector<Manifold>& manifolds, SphereCollider* A, HullCollider* B);
 
 void DetectCollision(std::vector<Manifold>& manifolds, Collider* A, Collider* B);
 

@@ -68,8 +68,6 @@ public:
 
 	void OnMouseMove(GLFWwindow* window, double x, double y);
 
-	void OnMouseButton(GLFWwindow* window, int button, int action, int mods);
-
 	virtual void OnKeyInput(GLFWwindow* window, int key, int code, int action, int mods);
 
 	void Step(const float dt);

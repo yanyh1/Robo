@@ -8,6 +8,11 @@ SphereCollider::SphereCollider(const float radius)
 	shape = Sphere;
 }
 
+glm::vec3 SphereCollider::getCenterWorldPosition()
+{
+	return GetBody()->LocalToGlobalPoint(GetCentroid());
+}
+
 float SphereCollider::GetRadius()
 {
 	return radius;

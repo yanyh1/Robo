@@ -66,6 +66,7 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 		glm::vec3(0.7, 0.7, 0.1));
 
 	srand(time(NULL));
+
 	goto BallSimu;
 	for (float spy = 20.f; spy < 50.f; spy += 3.8f)
 	{

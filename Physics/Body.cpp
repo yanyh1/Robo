@@ -392,19 +392,6 @@ void Body::Update(const float dt)
 	// damping?
 	velocity *= 0.99f;
 	angularVelocity *= 0.99f;
-
-	if (canSleep)
-	{
-		float lm = glm::dot(velocity, velocity);
-		float am = glm::dot(angularVelocity, angularVelocity);
-		float currMotion = lm + am;
-		const static float bias = 0.98f;
-		motion = bias * motion + (1.0f - bias) * currMotion;
-		if (motion < SLEEP_EPSILON2)
-			SetAwake(false);
-		else if (motion > SLEEP_EPSILON_MAX)
-			motion = SLEEP_EPSILON_MAX;
-	}
 }
 
 void Body::Render()

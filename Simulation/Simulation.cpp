@@ -103,8 +103,8 @@ void Simulation::OnMouseMove(GLFWwindow* window, double x, double y)
 	if (mouseY > height - 20) panTop = true;
 	else panTop = false;
 
-	//if (pitch > 89.0f) pitch = 89.0f;
-	//if (pitch < -89.0f) pitch = -89.0f;
+	if (pitch > 89.0f) pitch = 89.0f;
+	if (pitch < -89.0f) pitch = -89.0f;
 
 	Camera::GetInstance().Rotate(yaw, pitch, 0);
 
@@ -128,42 +128,6 @@ void Simulation::OnMouseMove(GLFWwindow* window, double x, double y)
 		}
 
 		mouseJoint.SetMouseAnchor(wMouse);
-	}
-}
-
-void Simulation::OnMouseButton(GLFWwindow* window, int button, int action, int mods)
-{
-	if (action == GLFW_PRESS)
-	{
-		// read pixel depth at mouse click position - gives screen space 3D point
-		float mouseZ = 0;
-		glReadPixels(mouseX, height - mouseY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &mouseZ);
-
-		// convert the point from screen space to world space
-		glm::vec3 sMouse = glm::vec3(mouseX, height - mouseY, mouseZ);
-		glm::mat4 MV = Camera::GetInstance().GetViewMatrix();
-		glm::mat4 P = Camera::GetInstance().GetProjectionMatrix();
-		glm::vec3 wMouse = glm::unProject(sMouse, MV, P, glm::vec4(0, 0, width, height));
-
-		// check if mouse point with collider
-		for (int i = 0; i < colliders.size(); i++)
-		{
-			Collider* c = colliders[i];
-
-			if (c->GetBody()->GetInvMass() == 0.0f)
-				continue;
-
-			if (QueryPoint(c, wMouse))
-			{
-				mouseJoint = MouseJoint(c->GetBody(), wMouse);
-				mouseJoint.SetMouseAnchor(wMouse);
-				picked = true;
-			}
-		}
-	}
-	else if (action == GLFW_RELEASE)
-	{
-		picked = false;
 	}
 }
 

@@ -4,7 +4,12 @@
 #include "Body.h"
 #include "SphereCollider.h"
 #include "BroadPhase.h"
-
+/// <summary>
+/// Whether point in the collider(OK)
+/// </summary>
+/// <param name="collider"></param>
+/// <param name="point"></param>
+/// <returns></returns>
 bool QueryPoint(Collider* collider, const glm::vec3& point)
 {
 	switch (collider->GetShape())
@@ -18,17 +23,19 @@ bool QueryPoint(Collider* collider, const glm::vec3& point)
 			P = c->GetBody()->LocalToGlobalPoint(P);
 			glm::vec3 n = c->GetFace(i)->normal;
 			n = c->GetBody()->LocalToGlobalVec(n);
-			if (glm::dot(P - point, n) < 0.0f)
+			if (glm::dot(P - point, n) < -1e-4f)
+			{
+				//the point must be outside the face
 				return false;
+			}
 		}
 		return true;
 	}
 	case (Collider::Sphere):
 	{
 		SphereCollider* c = static_cast<SphereCollider*>(collider);
-		glm::vec3 C = c->GetBody()->LocalToGlobalPoint(c->GetCentroid());
-		float d2 = glm::length2(point - C);
-		return (d2 < c->GetRadius()* c->GetRadius());
+		glm::vec3 C = c->getCenterWorldPosition();
+		return (glm::l2Norm(point - C) < c->GetRadius());
 	}
 	default:
 		return false;

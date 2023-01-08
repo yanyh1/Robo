@@ -132,7 +132,7 @@ bool IsMinkowskiFace(const glm::vec3& A, const glm::vec3& B, const glm::vec3& B_
 		(CBA * BDC > 0.0f));	// hemisphere test
 }
 
-void CreateEdgeContact(std::vector<Manifold>& manifolds, HullCollider* A, HullCollider*B, const EdgeQuery& query)
+void CreateEdgeContact(std::vector<Manifold>& manifolds, HullCollider* A, HullCollider* B, const EdgeQuery& query)
 {
 	HEdge* edgeA = A->GetEdge(query.edgeIndex1);
 	HEdge* edgeB = B->GetEdge(query.edgeIndex2);
@@ -153,12 +153,12 @@ void CreateEdgeContact(std::vector<Manifold>& manifolds, HullCollider* A, HullCo
 	e = glm::dot(d2, d2);
 	f = glm::dot(d2, r);
 
-	d = a*e - b*b;
+	d = a * e - b * b;
 	//assert(d > 0.0f);
 	//if (d <= 0)
 		//return;
 
-	s = (b*f - c*e) / d;
+	s = (b * f - c * e) / d;
 	//assert((s > 0.0f) && (s < 1.0f));
 	// ToDo : This should never happen since SAT already reports overlapping edges
 	// Edge-Edge collisions are currently buggy because of this
@@ -171,15 +171,15 @@ void CreateEdgeContact(std::vector<Manifold>& manifolds, HullCollider* A, HullCo
 	if (t < 0.0f)
 	{
 		t = 0.0f;
-		s = glm::clamp(-c/a, 0.0f, 1.0f);
+		s = glm::clamp(-c / a, 0.0f, 1.0f);
 	}
 	else if (t > 1.0f)
 	{
 		t = 1.0f;
-		s = glm::clamp((b-c)/a, 0.0f, 1.0f);
+		s = glm::clamp((b - c) / a, 0.0f, 1.0f);
 	}
 
-	glm::vec3 pos = (pA + s*d1 + pB + t*d2) * 0.5f;
+	glm::vec3 pos = (pA + s * d1 + pB + t * d2) * 0.5f;
 
 	Contact contact(A->GetBody(), B->GetBody(), pos, query.normal, -query.separation);
 	Manifold m;
@@ -247,7 +247,7 @@ void CreateFaceContact(std::vector<Manifold>& manifolds, HullCollider* incident,
 
 		if (outPoly.size() == 0)	// why is this happening?
 		{
-			return;	
+			return;
 		}
 
 		inPoly = outPoly;
@@ -276,7 +276,7 @@ void CreateFaceContact(std::vector<Manifold>& manifolds, HullCollider* incident,
 	}
 
 	if (m.contacts.size() > 0)
-	manifolds.push_back(m);
+		manifolds.push_back(m);
 }
 
 int FindIncidentFace(HullCollider* incident, HullCollider* reference, int referenceFace)
@@ -340,76 +340,77 @@ void DetectHullvsHull(std::vector<Manifold>& manifolds, HullCollider* A, HullCol
 		}
 	}
 }
-
-void DetectSphereVsSphere(std::vector<Manifold>& manifolds, SphereCollider* A, SphereCollider* B)
+//OK
+void DetectSphereWithSphere(std::vector<Manifold>& manifolds, SphereCollider* A, SphereCollider* B)
 {
 	glm::vec3 CA = A->GetBody()->LocalToGlobalPoint(A->GetCentroid());
 	glm::vec3 CB = B->GetBody()->LocalToGlobalPoint(B->GetCentroid());
 
 	glm::vec3 normal = CB - CA;
-	float dist2 = glm::length2(normal);
-	float rSum = A->GetRadius() + B->GetRadius();
+	float dist2 = glm::l2Norm(normal);
+	float ra = A->GetRadius();
+	float rb = B->GetRadius();
+	float rSum = ra + rb;
 
-	if (dist2 > rSum * rSum)
+	if (dist2 > rSum)
 		return;
 
-	normal /= glm::sqrt(dist2);
+	glm::normalize(normal);
+
 
 	glm::vec3 PA = CA + A->GetRadius() * normal;
 	glm::vec3 PB = CB - B->GetRadius() * normal;
 	glm::vec3 C = (PA + PB) * 0.5f;
-	float penetration = glm::length(PB - PA);
+	float penetration = rSum - dist2;
 
 	Manifold m;
-	Contact c(A->GetBody(), B->GetBody(), C, normal, penetration);
-	m.contacts.push_back(c);
+	m.contacts.push_back(std::move(Contact(A->GetBody(), B->GetBody(), C, normal, penetration)));
 	manifolds.push_back(m);
 }
-
-void DetectSphereVsHull(std::vector<Manifold>& manifolds, SphereCollider* A, HullCollider* B)
+/// <summary>
+/// Check whether A sphere is collided with a Hull(OK)
+/// </summary>
+/// <param name="manifolds"></param>
+/// <param name="A"></param>
+/// <param name="B"></param>
+void DetectSphereWithHull(std::vector<Manifold>& manifolds, SphereCollider* A, HullCollider* B)
 {
 	glm::vec3 center = A->GetBody()->GetPosition();	// sphere center
 
-	if (QueryPoint(B, center))	// sphere center is inside the hull. deep contact
+	if (QueryPoint(B, center))
 	{
 		float maxSeparation = -FLT_MAX;
 		float separation = 0.0;
-		int bestFace = -1;	// minimizing face (max separation)
+		int bestFitFace = -1;	// should be max separation
 
 		for (int i = 0; i < B->GetFaceCount(); i++)
 		{
-			glm::vec3 normal = B->GetFace(i)->normal;
-			normal = B->GetBody()->LocalToGlobalVec(normal);
-			glm::vec3 origin = B->GetFace(i)->edge->tail->position;
-			origin = B->GetBody()->LocalToGlobalPoint(origin);
-			float dist1 = glm::dot(origin, normal);	// face plane signed distance from (0,0,0)
-			float dist2 = glm::dot(center, normal);
+			glm::vec3 normal = B->GetBody()->LocalToGlobalVec(B->GetFace(i)->normal);
+			glm::vec3 origin = B->GetBody()->LocalToGlobalPoint(B->GetFace(i)->edge->tail->position);
 
-			separation = dist2 - dist1;
+			separation = glm::dot(origin - center, normal);
 			if (separation > maxSeparation)
 			{
 				maxSeparation = separation;
-				bestFace = i;
+				bestFitFace = i;
 			}
 		}
 
-		glm::vec3 normal = B->GetFace(bestFace)->normal;
-		normal = B->GetBody()->LocalToGlobalVec(normal);
+		glm::vec3 normal = B->GetBody()->LocalToGlobalVec(B->GetFace(bestFitFace)->normal);
 		glm::vec3 contact = center - maxSeparation * normal;
 
 		Manifold m;
-		Contact c(A->GetBody(), B->GetBody(), contact, -normal, -maxSeparation);
-		m.contacts.push_back(c);
+		m.contacts.push_back(std::move(Contact(A->GetBody(), B->GetBody(), contact, -normal, -maxSeparation)));
 		manifolds.push_back(m);
 	}
-	else	// sphere center is outside. shallow contact
+	else
 	{
 		glm::vec3 normal(0);
 		glm::vec3 point(0);
 		HalfSpace plane;
 		float distance = 0.0f;
 		float minDistance = FLT_MAX;
-		int closestFace = -1;
+		int bestFace = -1;
 
 		for (int i = 0; i < B->GetFaceCount(); i++)
 		{
@@ -418,13 +419,10 @@ void DetectSphereVsHull(std::vector<Manifold>& manifolds, SphereCollider* A, Hul
 			plane = HalfSpace(normal, point);
 			distance = plane.Distance(center);
 
-			if (distance < 0.0f)
-				continue;
-
-			if (distance < minDistance)
+			if (distance > 0.0f && distance < minDistance)
 			{
 				minDistance = distance;
-				closestFace = i;
+				bestFace = i;
 			}
 		}
 
@@ -435,15 +433,15 @@ void DetectSphereVsHull(std::vector<Manifold>& manifolds, SphereCollider* A, Hul
 		// intersect with closest face plane
 		glm::vec3 contact;
 		float penetration;
-		normal = B->GetBody()->LocalToGlobalVec(B->GetFace(closestFace)->normal);
+		normal = B->GetBody()->LocalToGlobalVec(B->GetFace(bestFace)->normal);
 		contact = center - minDistance * normal;
 
 		std::vector<glm::vec3> verts;
-		HEdge* e = B->GetFace(closestFace)->edge;
+		HEdge* e = B->GetFace(bestFace)->edge;
 		do {
 			verts.push_back(B->GetBody()->LocalToGlobalPoint(e->tail->position));
 			e = e->next;
-		} while (e != B->GetFace(closestFace)->edge);
+		} while (e != B->GetFace(bestFace)->edge);
 
 		if (QueryPoint(contact, verts, normal))
 		{
@@ -456,7 +454,7 @@ void DetectSphereVsHull(std::vector<Manifold>& manifolds, SphereCollider* A, Hul
 		}
 
 		// intersect with edges of closest face
-		e = B->GetFace(closestFace)->edge;
+		e = B->GetFace(bestFace)->edge;
 		glm::vec3 pA, pB;
 		do {
 			pA = B->GetBody()->LocalToGlobalPoint(e->tail->position);
@@ -474,22 +472,41 @@ void DetectSphereVsHull(std::vector<Manifold>& manifolds, SphereCollider* A, Hul
 				return;
 			}
 			e = e->next;
-		} while (e != B->GetFace(closestFace)->edge);
+		} while (e != B->GetFace(bestFace)->edge);
 	}
 }
-
+//OK
 void DetectCollision(std::vector<Manifold>& manifolds, Collider* A, Collider* B)
 {
+	if (A->GetShape() == Collider::Sphere && B->GetShape() == Collider::Sphere)
+	{
+		DetectSphereWithSphere(manifolds, static_cast<SphereCollider*>(A), static_cast<SphereCollider*>(B));
+	}
+	else if (A->GetShape() == Collider::Hull && B->GetShape() == Collider::Hull)
+	{
+		DetectHullvsHull(manifolds, static_cast<HullCollider*>(A), static_cast<HullCollider*>(B));
+	}
+	else if (A->GetShape() == Collider::Hull && B->GetShape() == Collider::Sphere)
+	{
+		DetectSphereWithHull(manifolds, static_cast<SphereCollider*>(B), static_cast<HullCollider*>(A));
+	}
+	else if (A->GetShape() == Collider::Sphere && B->GetShape() == Collider::Hull)
+	{
+		DetectSphereWithHull(manifolds, static_cast<SphereCollider*>(A), static_cast<HullCollider*>(B));
+	}
+	else {
+		assert(false);
+	}/*
 	switch (A->GetShape())
 	{
-	case (Collider::Hull) :
+	case (Collider::Hull):
 	{
 		switch (B->GetShape())
 		{
-		case (Collider::Hull) :
+		case (Collider::Hull):
 			DetectHullvsHull(manifolds, static_cast<HullCollider*>(A), static_cast<HullCollider*>(B));
 			break;
-		case (Collider::Sphere) :
+		case (Collider::Sphere):
 			DetectSphereVsHull(manifolds, static_cast<SphereCollider*>(B), static_cast<HullCollider*>(A));
 			break;
 		default:
@@ -498,14 +515,14 @@ void DetectCollision(std::vector<Manifold>& manifolds, Collider* A, Collider* B)
 		}
 	}
 	break;
-	case (Collider::Sphere) :
+	case (Collider::Sphere):
 	{
 		switch (B->GetShape())
 		{
-		case (Collider::Sphere) :
-			DetectSphereVsSphere(manifolds, static_cast<SphereCollider*>(A), static_cast<SphereCollider*>(B));
+		case (Collider::Sphere):
+
 			break;
-		case (Collider::Hull) :
+		case (Collider::Hull):
 			DetectSphereVsHull(manifolds, static_cast<SphereCollider*>(A), static_cast<HullCollider*>(B));
 			break;
 		default:
@@ -517,7 +534,7 @@ void DetectCollision(std::vector<Manifold>& manifolds, Collider* A, Collider* B)
 	default:
 		assert(false);
 		break;
-	}
+	}*/
 }
 
 glm::vec3 Simplex::FindClosestPoint() const
@@ -651,7 +668,7 @@ void Simplex::Solve3()
 
 	// Edge regions
 	// R AB
-	float vc = d1*d4 - d3*d2;
+	float vc = d1 * d4 - d3 * d2;
 	if (vc <= 0.0f && d1 >= 0.0f && d3 <= 0.0f)
 	{
 		vertices[0].weight = -d3 / (d1 - d3);
@@ -661,7 +678,7 @@ void Simplex::Solve3()
 	}
 
 	// R BC
-	float va = d3*d6 - d5*d4;
+	float va = d3 * d6 - d5 * d4;
 	if (va <= 0.0f && d4 >= d3 && d5 >= d6)
 	{
 		vertices[0] = vertices[1];
@@ -673,7 +690,7 @@ void Simplex::Solve3()
 	}
 
 	// R AC
-	float vb = d5*d2 - d1*d6;
+	float vb = d5 * d2 - d1 * d6;
 	if (vb <= 0.0f && d2 >= 0.0f && d6 <= 0.0f)
 	{
 		vertices[1] = vertices[2];
@@ -848,7 +865,7 @@ void Simplex::Solve4()
 	// Face regions
 
 	// R ACB
-	float det = glm::determinant(glm::mat3(AB, AC, AD)); 
+	float det = glm::determinant(glm::mat3(AB, AC, AD));
 	float sign = det > 0.0f ? 1.0f : -1.0f;
 	float tACB = sign * glm::determinant(glm::mat3(A, C, B));
 	if (tACB <= 0.0f && uACB >= 0.0f && vACB >= 0.0f && wACB >= 0.0f)

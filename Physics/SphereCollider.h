@@ -10,6 +10,7 @@ private:
 
 public:
 	SphereCollider(const float radius);
+	glm::vec3 getCenterWorldPosition();
 
 	float GetRadius();
 
