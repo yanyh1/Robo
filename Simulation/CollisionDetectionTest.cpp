@@ -65,16 +65,17 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 
 	srand(time(NULL));
 	goto BallSimu;
-	//Create A blocker
-	for (float spy = 5.0f; spy < 40.f; spy += 3.8f)
+	for (float spy = 20.f; spy < 50.f; spy += 2.8f)
 	{
-		for (float spx = 0.0f; spx < 10.f; spx += 2.8f)
+		for (float spx = 5.0f; spx < 30.f; spx += 1.8f)
 		{
-			Simulation::AddObjToScene("resources/box.obj",
-				glm::vec3(spx, spy, myrandom() * 5),
-				glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
-				1.0f,
-				(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)));
+			for (int i = 0; i < 4; i++) {
+				Simulation::AddObjToScene("resources/box.obj",
+					glm::vec3(spx, spy, myrandom() * 20),
+					glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
+					1.0f,
+					(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)));
+			}
 		}
 	}
 	goto END;

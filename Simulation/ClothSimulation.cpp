@@ -36,7 +36,7 @@ void ClothSimulation::OnInit(GLFWwindow* window)
 	{
 		for (int c = 0; c < NC; c++)
 		{
-			nodes.push_back(new Particle(0.001f, glm::vec3(0.3f*(float)(c), 0, -0.3*(float)(r + 1))));
+			nodes.push_back(new Particle(0.001f, glm::vec3(0.3f * (float)(c), 0, -0.3 * (float)(r + 1))));
 		}
 	}
 
@@ -46,9 +46,9 @@ void ClothSimulation::OnInit(GLFWwindow* window)
 	// horizontal connections
 	for (int r = 0; r < NR; r++)
 	{
-		for (int c = 0; c < NC-1; c++)
+		for (int c = 0; c < NC - 1; c++)
 		{
-			springs.push_back(new Spring(nodes[c + NC*r], nodes[c + 1 + NC*r], ks));
+			springs.push_back(new Spring(nodes[c + NC * r], nodes[c + 1 + NC * r], ks));
 		}
 	}
 	// vertical connections
@@ -56,7 +56,7 @@ void ClothSimulation::OnInit(GLFWwindow* window)
 	{
 		for (int c = 0; c < NC; c++)
 		{
-			springs.push_back(new Spring(nodes[c + NC*r], nodes[c + NC + NC*r], ks));
+			springs.push_back(new Spring(nodes[c + NC * r], nodes[c + NC + NC * r], ks));
 		}
 	}
 	// diagonal connections L->R
@@ -64,7 +64,7 @@ void ClothSimulation::OnInit(GLFWwindow* window)
 	{
 		for (int c = 0; c < NC - 1; c++)
 		{
-			springs.push_back(new Spring(nodes[c + NC*r], nodes[c + NC + 1 + NC*r], kd));
+			springs.push_back(new Spring(nodes[c + NC * r], nodes[c + NC + 1 + NC * r], kd));
 		}
 	}
 	// R->L
@@ -72,13 +72,13 @@ void ClothSimulation::OnInit(GLFWwindow* window)
 	{
 		for (int c = 1; c < NC; c++)
 		{
-			springs.push_back(new Spring(nodes[c + NC*r], nodes[c + NC - 1 + NC*r], kd));
+			springs.push_back(new Spring(nodes[c + NC * r], nodes[c + NC - 1 + NC * r], kd));
 		}
 	}
 
 	nodes.push_back(new Particle(0, glm::vec3(0)));
 	//springs.push_back(new Spring(nodes[0], nodes.back(), ks));
-	nodes.push_back(new Particle(0, glm::vec3(0.3f*(float)(NC-1), 0, 0)));
+	nodes.push_back(new Particle(0, glm::vec3(0.3f * (float)(NC - 1), 0, 0)));
 	//springs.push_back(new Spring(nodes[NC-1], nodes.back(), ks));
 
 	vertices.reserve(springs.size() * 2);
@@ -89,7 +89,7 @@ void ClothSimulation::OnInit(GLFWwindow* window)
 		vertices.push_back(s->GetParticleA()->GetPosition());
 		vertices.push_back(s->GetParticleB()->GetPosition());
 		indices.push_back(i);
-		indices.push_back(i+1);
+		indices.push_back(i + 1);
 		i += 2;
 	}
 
@@ -151,13 +151,13 @@ void ClothSimulation::OnKeyInput(GLFWwindow* window, int key, int code, int acti
 
 	float t = 0.001f;
 	if (keys[GLFW_KEY_DOWN])
-		nodes[mid]->SetPosition(p + t*glm::vec3(0, -1.0, 0));
+		nodes[mid]->SetPosition(p + t * glm::vec3(0, -1.0, 0));
 	if (keys[GLFW_KEY_UP])
-		nodes[mid]->SetPosition(p + t*glm::vec3(0, 1.0, 0));
+		nodes[mid]->SetPosition(p + t * glm::vec3(0, 1.0, 0));
 	if (keys[GLFW_KEY_RIGHT])
-		nodes[mid]->SetPosition(p + t*glm::vec3(1.0, 0, 0));
+		nodes[mid]->SetPosition(p + t * glm::vec3(1.0, 0, 0));
 	if (keys[GLFW_KEY_LEFT])
-		nodes[mid]->SetPosition(p + t*glm::vec3(-1.0, 0, 0));
+		nodes[mid]->SetPosition(p + t * glm::vec3(-1.0, 0, 0));
 	if (keys[GLFW_KEY_T])
 		advStep = true;
 }
@@ -197,7 +197,7 @@ void ClothSimulation::Update()
 
 	const static float dt = 1.0f / 100.0f; //0.002f;
 
-	if (!pauseStep)
+	if (!stepContinous)
 	{
 		Step(dt);
 	}
@@ -221,7 +221,7 @@ void ClothSimulation::Update()
 	{
 		r = p->GetPosition().x / 6.3f;
 		g = (p->GetPosition().y + 3.0f) / 6.0f;
-		b = (p->GetPosition().z  + 6.9f)/ 6.6f;
+		b = (p->GetPosition().z + 6.9f) / 6.6f;
 		T = glm::translate(p->GetPosition());
 		particleModel->SetColor(glm::vec3(r, g, b));
 		particleModel->SetMVP(VP * T);
@@ -232,7 +232,7 @@ void ClothSimulation::Update()
 	for (Spring* s : springs)
 	{
 		vertices[i] = s->GetParticleA()->GetPosition();
-		vertices[i+1] = s->GetParticleB()->GetPosition();
+		vertices[i + 1] = s->GetParticleB()->GetPosition();
 		i += 2;
 	}
 

@@ -21,7 +21,7 @@
 #define POSITION_ITERS 3
 
 Simulation::Simulation()
-	:debugDraw(false), firstMouseCB(false), pauseStep(true), advanceStep(false), picked(false)
+	:debugDraw(false), firstMouseCB(false), stepContinous(true), stepOneFrame(false), picked(false)
 {
 	panLeft = panRight = panBot = panTop = false;
 }
@@ -201,9 +201,9 @@ void Simulation::OnKeyInput(GLFWwindow* window, int key, int code, int action, i
 		Camera::GetInstance().Move(-Camera::GetInstance().GetCamY() * movespeed);
 
 	if (keys[GLFW_KEY_P])
-		pauseStep = !pauseStep;
+		stepContinous = !stepContinous;
 	if (keys[GLFW_KEY_N])
-		advanceStep = true;
+		stepOneFrame = true;
 }
 
 void Simulation::Step(const float dt)
@@ -263,22 +263,21 @@ void Simulation::Update()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Physics Update
-	const static float dt = 1.0f / 60.0f;
+	const static float dt = 1.0f / 30.0f;
 
-	if (!pauseStep)
+	if (!stepContinous)
 		Step(dt);
 	else
 	{
-		if (advanceStep)
+		if (stepOneFrame)
 		{
 			Step(dt);
-			advanceStep = false;
+			stepOneFrame = false;
 		}
 	}
 
 	// Graphics update
 	static glm::mat4 T(1), R(1), S(1), M(1), VP(1), MVP(1);
-	ModelData model;
 	glm::mat4 V = Camera::GetInstance().GetViewMatrix();
 	glm::mat4 P = Camera::GetInstance().GetProjectionMatrix();
 	VP = P * V;
@@ -327,12 +326,6 @@ void Simulation::Update()
 		sphere->SetColor(glm::vec3(1, 0, 0));
 		sphere->SetMVP(MVP);
 		sphere->Render();
-		/*CreateLine(p1, p2, model);
-		Model* line = new Model(model.vertices, model.indices);
-		line->SetPrimitive(GL_LINES);
-		line->SetMVP(VP);
-		line->SetColor(glm::vec3(1, 0, 0));
-		line->Render();*/
 
 		p1 = j.GetAnchorB();
 		p2 = j.GetBodyB()->GetCentroid();
@@ -343,13 +336,6 @@ void Simulation::Update()
 		hemiSphere->SetColor(glm::vec3(0.643, 0.827, 0.435));
 		hemiSphere->SetMVP(MVP);
 		hemiSphere->Render();
-		/*CreateLine(p1, p2, model);
-		line = new Model(model.vertices, model.indices);
-		line->SetPrimitive(GL_LINES);
-		line->SetMVP(VP);
-		line->SetColor(glm::vec3(0.643, 0.827, 0.435));
-		line->Render();
-		delete line;*/
 	}
 
 	float s = 3.0f;

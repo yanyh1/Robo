@@ -41,8 +41,8 @@ protected:
 	// toggle drawing wire-frame mode
 	bool debugDraw;
 
-	bool pauseStep;
-	bool advanceStep;
+	bool stepContinous;
+	bool stepOneFrame;
 
 	std::vector<Body> bodies;
 	std::vector<Collider*> colliders;

@@ -15,7 +15,7 @@ struct ModelData
 	std::vector<int> indices;
 	std::vector<int> frameIndices;
 
-	ModelData(){};
+	ModelData() {};
 
 	ModelData(const std::vector<glm::vec3>& vertices, const std::vector<int>& indices, const std::vector<int>& frameIndices)
 		: vertices(vertices), indices(indices), frameIndices(frameIndices)
@@ -91,8 +91,6 @@ public:
 	void SetInvMass(const float m);
 	float GetInvMass() const;
 
-	bool IsStatic() const;
-
 	void SetInertia(const glm::mat3& inertia);
 	glm::mat3 GetInvInertia() const;
 
@@ -122,9 +120,8 @@ public:
 
 	void SetAwake(const bool state);
 	bool IsAwake() const;
-	
+
 	void SetCanSleep(const bool state);
-	bool CanSleep() const;
 
 	std::vector<Collider*>& GetColliders();
 

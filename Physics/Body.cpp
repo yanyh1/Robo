@@ -11,7 +11,7 @@
 #include "Geometry.h"
 
 #define GRAVITY 9.8f
-#define SLEEP_EPSILON2 0.16f
+#define SLEEP_EPSILON2 0.12f
 #define SLEEP_EPSILON_MAX 1.0f
 #define MAX_VELOCITY2 400.0f
 
@@ -67,11 +67,6 @@ void Body::SetInvMass(const float im)
 float Body::GetInvMass() const
 {
 	return invMass;
-}
-
-bool Body::IsStatic() const
-{
-	return invMass == 0;
 }
 
 void Body::SetInertia(const glm::mat3& inertia)
@@ -191,11 +186,6 @@ bool Body::IsAwake() const
 void Body::SetCanSleep(const bool state)
 {
 	canSleep = state;
-}
-
-bool Body::CanSleep() const
-{
-	return canSleep;
 }
 
 std::vector<Collider*>& Body::GetColliders()
@@ -368,19 +358,25 @@ void Body::Update(const float dt)
 {
 	if (invMass == 0.0)
 		return;
+	if (position.y < -20.0f)
+	{
+		//Object is fallen down out of scene
+		awake = false;
+	}
+	if (!awake)
+		return;
 
 	invInertia = glm::transpose(R) * localInvInertia * R;
-
 	velocity += invMass * forceSum * dt;
 	velocity += GRAVITY * (glm::vec3(0, -1.0, 0)) * dt;
 	angularVelocity += invInertia * torqueSum * dt;
 
-	/*glm::vec3 dw1 = invInertia * torqueSum * dt;
-	glm::vec3 w2 = SolveGyroscopic(angularVelocity, dt);
-	glm::vec3 dw2 = -dt * localInvInertia * glm::cross(w2, localInertia*w2);
-	dw2 = LocalToGlobalVec(dw2);
+	//glm::vec3 dw1 = invInertia * torqueSum * dt;
+	//glm::vec3 w2 = SolveGyroscopic(angularVelocity, dt);
+	//glm::vec3 dw2 = -dt * localInvInertia * glm::cross(w2, localInertia * w2);
+	//dw2 = LocalToGlobalVec(dw2);
 
-	angularVelocity += dw1 + dw2;*/
+	//angularVelocity += dw1 + dw2;
 
 	forceSum = glm::vec3(0);
 	torqueSum = glm::vec3(0);
@@ -394,8 +390,8 @@ void Body::Update(const float dt)
 	position = centroid - LocalToGlobalVec(localCentroid);
 
 	// damping?
-	/*velocity *= 0.9999f;
-	angularVelocity *= 0.9999f;*/
+	velocity *= 0.99f;
+	angularVelocity *= 0.99f;
 
 	if (canSleep)
 	{
@@ -408,9 +404,6 @@ void Body::Update(const float dt)
 			SetAwake(false);
 		else if (motion > SLEEP_EPSILON_MAX)
 			motion = SLEEP_EPSILON_MAX;
-
-		if (lm > MAX_VELOCITY2)
-			SetAwake(false);
 	}
 }
 
