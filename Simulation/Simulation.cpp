@@ -130,10 +130,6 @@ void Simulation::OnMouseMove(GLFWwindow* window, double x, double y)
 	}
 }
 
-void Simulation::OnMouseScroll(GLFWwindow* window, double dx, double dy)
-{
-}
-
 void Simulation::OnMouseButton(GLFWwindow* window, int button, int action, int mods)
 {
 	if (action == GLFW_PRESS)
@@ -293,7 +289,8 @@ void Simulation::Update()
 	{
 		for (auto contact : m.contacts)
 		{
-			M = glm::translate(contact.GetPosition());
+			T = glm::translate(contact.GetPosition());
+			M = T;
 			MVP = VP * M;
 			sphere->SetMVP(MVP);
 			sphere->Render();

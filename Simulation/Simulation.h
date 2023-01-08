@@ -71,8 +71,6 @@ public:
 
 	void OnMouseMove(GLFWwindow* window, double x, double y);
 
-	void OnMouseScroll(GLFWwindow* window, double dx, double dy);
-
 	void OnMouseButton(GLFWwindow* window, int button, int action, int mods);
 
 	virtual void OnKeyInput(GLFWwindow* window, int key, int code, int action, int mods);

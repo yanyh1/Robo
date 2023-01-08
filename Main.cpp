@@ -17,11 +17,6 @@ void OnMouseMove(GLFWwindow* window, double x, double y)
 	sim->OnMouseMove(window, x, y);
 }
 
-void OnMouseScroll(GLFWwindow* window, double dx, double dy)
-{
-	sim->OnMouseScroll(window, dx, dy);
-}
-
 void OnMouseButton(GLFWwindow* window, int button, int action, int mods)
 {
 	sim->OnMouseButton(window, button, action, mods);
