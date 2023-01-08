@@ -13,9 +13,32 @@ CollisionDetectionTest& CollisionDetectionTest::GetInstance()
 	return instance;
 }
 
-float random()
+float myrandom()
 {
 	return (float)rand() / (float)RAND_MAX;
+}
+bool checkvaild(std::vector<glm::vec3>& history, glm::vec3 input)
+{
+	for (auto position : history)
+	{
+		if (glm::l2Norm(input, position) < 2.f)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+glm::vec3 generatePositon()
+{
+	static std::vector<glm::vec3> history;
+
+Regen:
+	auto positon = glm::vec3(5 + (myrandom() - .5) * 20, 20 + (myrandom() - .5) * 30, -5.0);
+	if (!checkvaild(history, positon))
+	{
+		goto Regen;
+	}
+	return positon;
 }
 
 void CollisionDetectionTest::OnInit(GLFWwindow* window)
@@ -41,37 +64,41 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 		glm::vec3(0.7, 0.7, 0.1));
 
 	srand(time(NULL));
+	//goto BallSimu;
 	//Create A blocker
-	for (int i = 0; i < 10; i++)
+	for (float spy = 1.0f; spy < 40.f; spy += 3.8f)
 	{
-		auto positon = glm::vec3(5 + (random() - .5) * 20, 20 + (random() - .5) * 30, -5.0);
-
-		Simulation::AddObjToScene("resources/box.obj",
-			positon,
-			glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
-			1.0f,
-			(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)));
+		for (float spx = -3.0f; spx < 10.f; spx += 2.8f)
+		{
+			Simulation::AddObjToScene("resources/box.obj",
+				glm::vec3(spx, spy, myrandom() * 5),
+				glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
+				1.0f,
+				(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)));
+		}
 	}
+	goto END;
 
+BallSimu:
+	float radius = 0.5f;
+	CreateSphere(radius, model);
+	body.SetModelData(model);
+	body.SetMass(1.f);
+	body.SetColor(glm::vec3(1.0, 0.9, 0.3));
+	body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));
 
-
-	//float spawnY = 1.0;
-	//float radius = 0.5f;
-	//CreateSphere(radius, model);
-	//body.SetModelData(model);
-	//body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));
-	//body.SetMass(1.f);
-	//body.SetColor(glm::vec3(1.0, 0.9, 0.3));
-	//for (int i = 0; i < 20; i++)
-	//{
-	//	body.SetPosition(glm::vec3(5 + (random() - .5) * 20, 10 + (random() - .5) * 20, -5.0));
-	//	bodies.push_back(body);
-	//	collider = new SphereCollider(radius);
-	//	bodies.back().AddCollider(collider);
-	//	colliders.push_back(collider);
-
-	//}
-
+	for (float spy = 1.0f; spy < 20.f; spy += 1.8f)
+	{
+		for (float spx = -3.0f; spx < 10.f; spx += 1.8f)
+		{
+			body.SetPosition(glm::vec3(spx, spy, myrandom() * 5));
+			bodies.push_back(body);
+			collider = new SphereCollider(radius);
+			bodies.back().AddCollider(collider);
+			colliders.push_back(collider);
+		}
+	}
+END:
 	BroadPhase::GetInstance().Init(colliders);
 }
 
