@@ -61,7 +61,6 @@ int main()
 	glfwSetWindowSizeCallback(window, OnWindowResize);
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, OnMouseMove);
-	//glfwSetScrollCallback(window, OnMouseScroll);
 	glfwSetMouseButtonCallback(window, OnMouseButton);
 	glfwSetKeyCallback(window, OnKeyInput);
 

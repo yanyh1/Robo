@@ -181,19 +181,24 @@ void Simulation::OnKeyInput(GLFWwindow* window, int key, int code, int action, i
 		else if (action == GLFW_RELEASE)
 			keys[key] = false;
 	}
+	float movespeed = 3.0f;
+	if (keys[GLFW_KEY_LEFT_SHIFT])
+	{
+		movespeed = 8.0f;
+	}
 
 	if (keys[GLFW_KEY_W])
-		Camera::GetInstance().Move(Camera::GetInstance().GetCamZ());
+		Camera::GetInstance().Move(Camera::GetInstance().GetCamZ() * movespeed);
 	if (keys[GLFW_KEY_S])
-		Camera::GetInstance().Move(-Camera::GetInstance().GetCamZ());
+		Camera::GetInstance().Move(-Camera::GetInstance().GetCamZ() * movespeed);
 	if (keys[GLFW_KEY_A])
-		Camera::GetInstance().Move(-Camera::GetInstance().GetCamX());
+		Camera::GetInstance().Move(-Camera::GetInstance().GetCamX() * movespeed);
 	if (keys[GLFW_KEY_D])
-		Camera::GetInstance().Move(Camera::GetInstance().GetCamX());
-	if (keys[GLFW_KEY_Q])
-		Camera::GetInstance().Move(Camera::GetInstance().GetCamY());
-	if (keys[GLFW_KEY_Z])
-		Camera::GetInstance().Move(-Camera::GetInstance().GetCamY());
+		Camera::GetInstance().Move(Camera::GetInstance().GetCamX() * movespeed);
+	if (keys[GLFW_KEY_SPACE])
+		Camera::GetInstance().Move(Camera::GetInstance().GetCamY() * movespeed);
+	if (keys[GLFW_KEY_LEFT_CONTROL])
+		Camera::GetInstance().Move(-Camera::GetInstance().GetCamY() * movespeed);
 
 	if (keys[GLFW_KEY_P])
 		pauseStep = !pauseStep;
