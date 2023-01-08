@@ -13,6 +13,11 @@ CollisionDetectionTest& CollisionDetectionTest::GetInstance()
 	return instance;
 }
 
+float random()
+{
+	return (float)rand() / (float)RAND_MAX;
+}
+
 void CollisionDetectionTest::OnInit(GLFWwindow* window)
 {
 	Simulation::OnInit(window);
@@ -35,30 +40,37 @@ void CollisionDetectionTest::OnInit(GLFWwindow* window)
 		0.0f,
 		glm::vec3(0.7, 0.7, 0.1));
 
+	srand(time(NULL));
 	//Create A blocker
-//	ParseObj("resources/box.obj", mesh);
-//mesh.GetModelData(model);
-//collider = new HullCollider(mesh);
-//body.SetModelData(model);
-//body.SetPosition(glm::vec3(0.0, sp, -5.0));
-
-
-	float spawnY = 1.0;
-	for (float sp = spawnY; sp < 10.f; sp += 0.4f)
+	for (int i = 0; i < 10; i++)
 	{
-		float radius = 0.1f;
-		CreateSphere(radius, model);
-		body.SetModelData(model);
-		body.SetPosition(glm::vec3(0.0, sp, -5.0));
-		body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));	// setting orientation to sphere causes strange behaviour. why?
-		body.SetMass(1.0f);
-		body.SetColor(glm::vec3(1.0, 0.9, 0.3));
-		bodies.push_back(body);
-		collider = new SphereCollider(radius);
-		bodies.back().AddCollider(collider);
-		colliders.push_back(collider);
+		auto positon = glm::vec3(5 + (random() - .5) * 20, 20 + (random() - .5) * 30, -5.0);
 
+		Simulation::AddObjToScene("resources/box.obj",
+			positon,
+			glm::angleAxis(0.0f, glm::vec3(0, 0, 1)),
+			1.0f,
+			(glm::vec3(250.0 / 255, 193.7 / 255, 26.1 / 255)));
 	}
+
+
+
+	//float spawnY = 1.0;
+	//float radius = 0.5f;
+	//CreateSphere(radius, model);
+	//body.SetModelData(model);
+	//body.SetOrientation(glm::angleAxis(0.0f, glm::vec3(0, 0, 1)));
+	//body.SetMass(1.f);
+	//body.SetColor(glm::vec3(1.0, 0.9, 0.3));
+	//for (int i = 0; i < 20; i++)
+	//{
+	//	body.SetPosition(glm::vec3(5 + (random() - .5) * 20, 10 + (random() - .5) * 20, -5.0));
+	//	bodies.push_back(body);
+	//	collider = new SphereCollider(radius);
+	//	bodies.back().AddCollider(collider);
+	//	colliders.push_back(collider);
+
+	//}
 
 	BroadPhase::GetInstance().Init(colliders);
 }

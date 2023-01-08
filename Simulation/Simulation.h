@@ -54,7 +54,6 @@ protected:
 	MouseJoint mouseJoint;
 	bool picked;
 
-	Poly* boxModel;
 	Model* cylinder;
 	Model* sphere;
 	Model* hemiSphere;
@@ -64,7 +63,7 @@ public:
 
 	void AddObjToScene(const std::string& file, glm::vec3 position, glm::quat orientation, float mass, glm::vec3 color);
 
-	~Simulation();
+	~Simulation() = default;
 
 	virtual void OnInit(GLFWwindow* window);
 

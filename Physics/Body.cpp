@@ -330,8 +330,8 @@ void Body::IntegrateVelocity(const float dt)
 	angularVelocity += invInertia * torqueSum * dt;
 
 	// damp velocity?
-	velocity *= 0.99f;
-	angularVelocity *= 0.99f;
+	//velocity *= 0.99f;
+	//angularVelocity *= 0.99f;
 
 	forceSum = glm::vec3(0);
 	torqueSum = glm::vec3(0);

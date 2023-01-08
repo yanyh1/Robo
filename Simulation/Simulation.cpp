@@ -38,32 +38,22 @@ void Simulation::OnInit(GLFWwindow* window)
 	// draw the pixel only if the object is closer to the viewer
 	glEnable(GL_DEPTH_TEST); // enables depth-testing
 	glDepthFunc(GL_LESS);    // interpret smaller values as closer
-
-	//glViewport(0, 0, width, height);
 	Camera::GetInstance().SetProjection(45.0, (float)width / (float)height);
-	Camera::GetInstance().SetPosition(glm::vec3(0, 1, 0));
+	Camera::GetInstance().SetPosition(glm::vec3(0, 1, 20));
 
-	//HMesh mesh;
-	//ParseObj("resources/box.obj", mesh);
-	//std::vector<glm::vec3> vertices;
-	//std::vector<int> indices;
-
-	//for (auto vert : mesh.vertices)
-	//{
-	//	vertices.push_back(vert->position);
-	//}
-	//mesh.GetTriangleIndices(indices);
-	//boxModel = new Poly(vertices, indices);
-	//boxModel->SetColor(glm::vec3(1.0, 0, 0));
+	HMesh mesh;
+	ParseObj("resources/box.obj", mesh);
+	std::vector<glm::vec3> vertices;
+	std::vector<int> indices;
 
 	ModelData model;
-	//ParseObj("resources/cylinder.obj", mesh);
-	//mesh.GetModelData(model);
-	//cylinder = new Model(model.vertices, model.indices);
+	ParseObj("resources/cylinder.obj", mesh);
+	mesh.GetModelData(model);
+	cylinder = new Model(model.vertices, model.indices);
 	CreateSphere(0.03, model);
 	sphere = new Model(model.vertices, model.indices);
-	//CreateHemiSphere(1.0, model);
-	//hemiSphere = new Model(model.vertices, model.indices);
+	CreateHemiSphere(1.0, model);
+	hemiSphere = new Model(model.vertices, model.indices);
 
 	// reserving space for global data
 	// otherwise any pointers or references to container elements will get invalidated on using push_back
@@ -303,26 +293,10 @@ void Simulation::Update()
 	{
 		for (auto contact : m.contacts)
 		{
-			T = glm::translate(contact.GetPosition());
-			//S = glm::scale(glm::vec3(0.03f));
-			M = T;
+			M = glm::translate(contact.GetPosition());
 			MVP = VP * M;
 			sphere->SetMVP(MVP);
 			sphere->Render();
-
-			// tangents
-			/*std::vector<glm::vec3> verts = { contact.GetPosition(), contact.GetPosition() + contact.GetTangent(0) };
-			std::vector<int> ids = { 0, 1 };
-			Line* line = new Line(verts, ids);
-			line->SetMVP(VP);
-			line->SetColor(glm::vec3(0, 1, 0));
-			line->Render();
-			verts = { contact.GetPosition(), contact.GetPosition() + contact.GetTangent(1) };
-			line = new Line(verts, ids);
-			line->SetMVP(VP);
-			line->SetColor(glm::vec3(0, 1, 0));
-			line->Render();
-			delete line;*/
 		}
 	}
 
@@ -400,9 +374,6 @@ void Simulation::Update()
 
 	Camera::GetInstance().Update();
 }
-
-Simulation::~Simulation()
-{}
 
 void Simulation::AddObjToScene(const std::string& file, glm::vec3 position,
 	glm::quat orientation, float mass,
