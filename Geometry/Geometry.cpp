@@ -45,9 +45,11 @@ bool HalfSpace::On(const glm::vec3& point) const
 	return (dist < EPSILON&& dist > -EPSILON);
 }
 
-//Magic 这个是从normal算出两个正交的向量（给摩擦力用的）
+// Compute a consistent orthonormal basis with the given vector
 void ComputeBasis(const glm::vec3& i, glm::vec3& j, glm::vec3& k)
 {
+	// Ref: http://box2d.org/2014/02/computing-a-basis/
+	// At least one component of a unit vector should be >= 0.57735f
 	if (std::abs(i.x) >= 0.57735f)
 		j = glm::vec3(i.y, -i.x, 0);
 	else
